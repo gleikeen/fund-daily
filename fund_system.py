@@ -1,0 +1,658 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+基金低估筛选与综合投资价值评估系统 (Fund Undervaluation Screening & Valuation System)
+=======================================================================================
+每日自动化运行：从基金池（指数估值 + 基本面）出发，完成
+  1) 数据采集（估值分位 / PE·PB / 股息率 / ROE / 规模 / 经理，基准日 7/15 收盘）
+  2) 筛选逻辑（PE 历史分位 < 20%，或 PB 绝对低估豁免；排除基本面重大恶化）
+  3) 信息补充（近 3 个月新闻 / 行业分析 / 持仓变动 / 经理观点，见每只在 news / info 字段）
+  4) 综合评估（估值/行业前景/经理能力/持仓结构/风险收益比/流动性 六维量化评分）
+  5) 买入建议（总分≥7 建议买入；5–7 谨慎买入；<5 不建议买入）
+  6) 报告生成（HTML：核心指标对比表 + 逐只评分明细 + 买入建议 + 风险提示）
+
+数据来源：天天基金网 / 雪球·蛋卷基金 / 平安证券指数信号灯 / 东方财富 / 同花顺iFinD /
+          腾讯财经 / 新浪财经 / 网易 / 证券时报 / 每日经济新闻（公开信息，AI 整理）。
+注意：估值分位为基准日（7/15 收盘）快照（近十年历史分位，平安证券指数信号灯口径），
+      日内稳定；组合层面的盘前催化来自 7/16 盘前公开资讯核验。
+"""
+
+import os
+import datetime
+
+# ----------------------------------------------------------------------------
+# 0. 运行元数据
+# ----------------------------------------------------------------------------
+RUN_DT = datetime.datetime.now()
+RUN_TS = RUN_DT.strftime("%Y-%m-%d-%H")          # 文件名用：fund-report-YYYY-MM-DD-HH
+RUN_DATE = RUN_DT.strftime("%Y-%m-%d")
+GEN_LABEL = f"{RUN_TS}（盘前快照 · 7/15 收盘估值 + 7/16 盘前催化）"
+VAL_SNAPSHOT = "2026-07-15 收盘（平安证券指数信号灯口径，近十年分位）"
+SRC_LINE = "天天基金网 · 雪球/蛋卷基金 · 平安证券指数信号灯 · 东方财富 · 同花顺iFinD · 腾讯财经/新浪财经/网易 · 证券时报/每日经济新闻"
+
+# ----------------------------------------------------------------------------
+# 1. 六维评分权重（合计 1.00）
+# ----------------------------------------------------------------------------
+WEIGHTS = {
+    "估值水平": 0.20,
+    "行业前景": 0.20,
+    "经理能力": 0.12,
+    "持仓结构": 0.13,
+    "风险收益比": 0.25,
+    "流动性": 0.10,
+}
+DIM_ORDER = ["估值水平", "行业前景", "经理能力", "持仓结构", "风险收益比", "流动性"]
+
+# ----------------------------------------------------------------------------
+# 2. 基金池（基准估值 7/15 收盘；叙事融合 7/16 盘前新催化）
+#    scores: 六维 0-10；news: 近3月信息补充；info: 持仓/经理观点补充
+# ----------------------------------------------------------------------------
+FUNDS = [
+    {
+        "code": "513050", "name": "易方达中概互联网ETF", "index": "中概互联50 (CSIH30533)",
+        "type": "QDII-ETF", "scale": 364.49, "pe": 16.32, "pe_pct": 1.83, "pb": 2.12, "pb_pct": 1.56,
+        "div": 1.06, "roe": 12.95, "vstat": "极低", "manager": "余海燕 / 刘依姗", "tenure": "团队稳定，无近期变更",
+        "close": "+3.23%", "abs_undervalued": False,
+        "scores": {"估值水平": 9.5, "行业前景": 8.5, "经理能力": 8.5, "持仓结构": 7.0, "风险收益比": 8.0, "流动性": 9.5},
+        "dims": {
+            "估值水平": "PE 16.32，近十年分位 <b>1.83%</b>（平安口径，全样本最低之一）；PB 2.12、分位 1.56%，估值处历史最便宜区间，是港股科技核心标的中“最干净”的一只。",
+            "行业前景": "<strong>中概隔夜大涨 + 南向放量托底 + 外围缓和：</strong>7/16 盘前，纳斯达克中国金龙指数大涨近 4%、阿里巴巴涨近 8%、小鹏 +5%、哔哩哔哩/爱奇艺 +5%；7/15 南向单日净买 133.64 亿（7月累计约 616.5 亿）延续托底；成分股（腾讯/阿里/美团/京东/携程）平台属性稳健。美国 6 月 CPI 3.5%（环比 -0.4%）、PPI 5.5% 均低于预期，加息概率骤降、外围流动性压力缓和，利好 QDII。",
+            "经理能力": "余海燕为易方达指数投资老将，团队规模与流动性管理成熟，跟踪误差可控。",
+            "持仓结构": "集中于腾讯、阿里、美团、拼多多、京东、携程等头部平台，龙头集中度高、弹性大，但也意味着单一政策/个股风险集中。",
+            "风险收益比": "估值分位处历史极值低位（1.83%）+ 中概隔夜大涨 + 南向放量托底 + 外围加息预期骤降，安全边际与边际动能兼具；但美联储沃什偏鹰 + 美伊冲突升级油价三连涨 + 中概 ADR 波动带来短线扰动。",
+            "流动性": "规模 364.49 亿，流动性极佳。",
+        },
+        "verdict": "建议分批布局（偏多·最优先，估值最干净 + 中概隔夜大涨 + 南向放量 + 外围缓和）。",
+        "risks": [
+            "中美监管与审计风险、人民币汇率波动",
+            "成分股集中度过高（依赖平台股）",
+            "港股流动性受海外利率与地缘冲击（美伊冲突升级、油价三连涨）",
+            "美联储沃什偏鹰 + 隔夜中概 ADR 走弱的短线传导",
+        ],
+        "news": [
+            "7/16 盘前：纳斯达克中国金龙指数大涨近 4%，阿里巴巴涨近 8%，中概股多数走强（证券时报/腾讯财经）。",
+            "7/15：南向单日净买 133.64 亿港元，7月累计约 616.5 亿，延续强力托底（证券时报）。",
+            "美国 6 月 CPI 同比 3.5%（预期 3.8%）、PPI 同比 5.5%（预期 6.2%）双双低于预期，7 月加息概率从前一日 42% 降至 17%（今日头条/腾讯财经）。",
+        ],
+        "info": "持仓集中于腾讯/阿里/美团/京东/拼多多/携程等平台龙头；经理余海燕/刘依姗团队稳定，无近期变更。",
+    },
+    {
+        "code": "513180", "name": "华夏恒生科技ETF", "index": "恒生科技 (HKHSTECH)",
+        "type": "QDII-ETF", "scale": 498.0, "pe": 23.06, "pe_pct": 35.34, "pb": 2.62, "pb_pct": 40.79,
+        "div": 0.95, "roe": 11.20, "vstat": "偏低·破线", "manager": "徐猛", "tenure": "管理规模大，运作稳健",
+        "close": "+1.31%", "abs_undervalued": False,
+        "scores": {"估值水平": 4.5, "行业前景": 7.5, "经理能力": 8.5, "持仓结构": 8.0, "风险收益比": 7.0, "流动性": 9.5},
+        "dims": {
+            "估值水平": "⚠️ 静态 PE 23.06，分位 <b>35.34%</b>（平安口径）仍明显突破 20% 筛选线；PB 2.62、分位 40.79%。“深度低估”属性随反弹弱化，当前逻辑为“估值回落 + 政策 + 南向托底”而非“深度价值”（动态 PE 约 25% 分位仍偏高）。",
+            "行业前景": "<strong>收盘强反弹 + 南向加速 + 中概带动：</strong>7/15 恒科 +1.31%、恒指 +1.39%，南向 133.64 亿加速托底；7/16 盘前中概金龙指数大涨近 4%、阿里 +8% 直接带动；WAIC2026（7/17–20 上海）强化 AI 叙事。但美伊冲突升级、油价三连涨、沃什偏鹰构成对冲。",
+            "经理能力": "徐猛为华夏 ETF 业务核心，管理规模大、跟踪误差约 1.47%，运作稳健。",
+            "持仓结构": "阿里、腾讯、美团、小米、京东、网易、中芯国际等平台型 + 半导体科技龙头，兼具成长与分红属性，分散度较好。",
+            "风险收益比": "估值分位仍破线（35.34%），但 7/15 收 +1.31%、南向加速托底、中概隔夜大涨边际改善；适合定投参与，避免单笔追高。",
+            "流动性": "规模近 498 亿，全市场最大恒生科技 ETF 之一，流动性极佳。",
+        },
+        "verdict": "建议定投、勿追高（偏多·破线，中概带动边际改善，但 PE 分位仍破 20% 线）。按筛选规则 PE 分位 > 20%，退出“深度低估”判定，仅作定投参与。",
+        "risks": [
+            "⚠️ 静态 PE 分位 35.34%（平安口径）仍破 20% 筛选线，追高回踩风险",
+            "半导体/AI 权重回调、海外通胀与利率反复（美联储沃什偏鹰）",
+            "外资流出冲击、地缘政治（美伊冲突升级、油价三连涨）",
+            "南向资金流入的持续性、估值修复后再度破线",
+        ],
+        "news": [
+            "7/16 盘前：中概金龙指数大涨近 4%、阿里 +8%，对恒科形成直接带动（证券时报）。",
+            "7/15：恒科 +1.31%、恒指 +1.39%，南向单日净买 133.64 亿（证券时报）。",
+            "WAIC2026 将于 7/17–20 在上海开幕，AI 智能眼镜迎新品集中发布潮（同花顺/陆家嘴财经早餐）。",
+        ],
+        "info": "持仓阿里/腾讯/美团/小米/京东/网易/中芯国际等；经理徐猛长期管理，无变更。",
+    },
+    {
+        "code": "512170", "name": "华宝中证医疗ETF", "index": "中证医疗 (SZ399989)",
+        "type": "股票型 ETF", "scale": 264.51, "pe": 28.49, "pe_pct": 10.67, "pb": 3.13, "pb_pct": 2.40,
+        "div": 1.46, "roe": 11.26, "vstat": "极低", "manager": "张放（原胡洁 2026/2 离任）", "tenure": "张放自 2026/2/12 接管，任职期收益约 -10.93%",
+        "close": "+4.08%", "abs_undervalued": False,
+        "scores": {"估值水平": 9.0, "行业前景": 9.0, "经理能力": 6.5, "持仓结构": 8.0, "风险收益比": 8.5, "流动性": 9.0},
+        "dims": {
+            "估值水平": "PE 28.49，分位 <b>10.67%</b>（平安口径，极低）；<b>PB 3.13，分位仅 2.40%</b>（极低），资产端估值处历史底部。东方财富（7/15）中证医疗 PE 28.91、成立后 12.21% 分位，印证估值处历史极低区。",
+            "行业前景": "<strong>🔥 7/15 医疗全天领涨 + 医保目录进专家评审 + 实验猴价格翻倍：</strong>医疗ETF(512170) 收 +4.08%（成交 15.10 亿）；国家医保局 601+58 形式审查名单（7/14 公布）进入专家评审“大考”阶段（7/15 详解评审规则）；实验猴均价超 20 万/只（较 2025 底 14 万涨超 40%），印证 CRO 景气回升；上半年创新药对外授权 81 笔/约 1100 亿美元（达 2025 全年 80%）。",
+            "经理能力": "⚠️ 原明星经理胡洁 2026/2 离任，现任张放接管，任职期收益约 -10.93%（系板块长期调整所致），运作稳定性需持续观察。",
+            "持仓结构": "覆盖医疗器械、医疗服务、CXO、生物科技（药明康德 11.15%、迈瑞医疗 8.53%、联影医疗 6.98%、爱尔眼科 5.54% 等），估值更低、政策底未破；创新药授权大年 + 多重政策催化强化逻辑。",
+            "风险收益比": "7/15 收 +4.08%、全天超百亿主力净买，估值分位近历史极值低位（PB 2.40%）提供安全边际；医保评审 + CRO 景气 + 创新药授权新高五端共振，赔率与动能同步改善；但单日涨幅较大、短线或现获利回吐，仍待中报验证。",
+            "流动性": "规模 264.51 亿（7/14 份额 828.16 亿份），成交活跃（7/15 成交 15.10 亿），流动性好。",
+        },
+        "verdict": "强烈建议分批布局（强烈偏多·领涨，医疗全天领涨 + 医保目录进专家评审 + 实验猴翻倍印证 CRO 景气）。",
+        "risks": [
+            "基金经理变更运作不确定性（张放任职期收益约 -10.93%）",
+            "单日涨幅较大后获利回吐（7/15 +4.08%、盘中破半年线）",
+            "医保定价机制调整与集采范围变数、中报不及预期",
+            "创新药研发失败、板块高波动",
+        ],
+        "news": [
+            "7/14：国家医保局公布 601（基本医保）+ 58（商保创新药）形式审查名单，进入专家评审阶段（7/15 详解评审/谈判规则）。",
+            "实验猴均价超 20 万/只，较 2025 底涨超 40%，CRO 行业景气度回升信号（同花顺/10jqka）。",
+            "上半年创新药对外授权 81 笔/约 1100 亿美元，达 2025 全年 80%（国家药监局）。",
+        ],
+        "info": "药明康德/迈瑞医疗/联影医疗/爱尔眼科等权重；经理变更（胡洁→张放），需观察运作稳定性。",
+    },
+    {
+        "code": "161725", "name": "招商中证白酒指数A", "index": "中证白酒 (SZ399997)",
+        "type": "指数(LOF)", "scale": 206.9, "pe": 18.15, "pe_pct": 5.89, "pb": 3.69, "pb_pct": 0.28,
+        "div": 4.65, "roe": 20.87, "vstat": "极低", "manager": "侯昊", "tenure": "长期管理百亿级 LOF",
+        "close": "白酒概念全天强势", "abs_undervalued": False,
+        "scores": {"估值水平": 9.0, "行业前景": 7.5, "经理能力": 8.5, "持仓结构": 8.5, "风险收益比": 7.5, "流动性": 9.0},
+        "dims": {
+            "估值水平": "PE 18.15，分位 <b>5.89%</b>（平安口径，极低，近十年底部区间）；PB 3.69，分位 0.28%（极低）。雪球/券商中证白酒 PE 19.52、近十年 11.96% 分位，食品饮料板块 PE 近十年 1.5% 分位，估值处历史最底部。",
+            "行业前景": "<strong>《扩大消费“十五五”规划》+ 库存出清 + 全天回暖：</strong>国务院批复规划明确“2030 年社零 60 万亿、增加居民财产性收入”；7/15 白酒概念全天逆势走强（金种子/古井贡酒涨停、茅台 +3%、酒ETF +5.05%）。26Q1 白酒营收/归母同比 -0.7%/-1.7%，较 25Q4 降幅大幅收窄。高盛指中证白酒 P/E、P/B 近十年低位（2026E 19x/2027E 16x）、“最坏已过”；但中酒协指 68.5% 酒企看下半年仍下行。<strong>⚠️ 上半年社零同比仅 +1.3%（商品端 +1.1% 偏弱），全面复苏待双节验证。</strong>",
+            "经理能力": "侯昊为招商指数投资部核心，长期管理该百亿级 LOF，跟踪与流动性管理经验丰富。",
+            "持仓结构": "贵州茅台、五粮液、泸州老窖、山西汾酒等高端/次高端龙头，ROE 高达 20.87%。",
+            "风险收益比": "估值底极明确、消费规划直接催化、26Q1 降幅大幅收窄印证边际改善、高股息属性突出，中长期赔率优；但机构分歧大、业绩仍同比负增、社零商品端偏弱（+1.3%），拐点待双节验证，短期需防预期差。",
+            "流动性": "规模 207 亿，LOF 场内 + 场外双通道，流动性充裕。",
+        },
+        "verdict": "建议左侧分批布局（偏多·较强，消费规划直接利好 + 底部信号明晰 + 全天回暖）。",
+        "risks": [
+            "消费复苏不及预期（社零商品端仅 +1.3%）",
+            "头部酒企业绩仍同比负增、库存与价格体系压力（次高端倒挂）",
+            "机构分歧导致波动、轮动风格切换至进攻板块",
+            "市场系统性下跌的情绪外溢",
+        ],
+        "news": [
+            "国务院批复《扩大消费“十五五”规划》：2030 年社零 60 万亿、增加居民财产性收入（财经网/新华社）。",
+            "7/15：金种子酒/古井贡酒涨停、贵州茅台 +3%、酒ETF鹏华 +5.05%（新浪财经/腾讯 ETF 日报）。",
+            "高盛 6/23 报告：中证白酒 P/E、P/B 均处近十年低位（2026E 19x/2027E 16x），“最坏已过、复苏极早期”。",
+        ],
+        "info": "茅台/五粮液/泸州老窖/汾酒等高端龙头，ROE 20.87%；经理侯昊长期任职，无变更。",
+    },
+    {
+        "code": "512880", "name": "国泰中证全指证券公司ETF", "index": "证券公司 (SZ399975)",
+        "type": "股票型 ETF", "scale": 516.3, "pe": 15.27, "pe_pct": 9.06, "pb": 1.35, "pb_pct": 26.72,
+        "div": 1.89, "roe": 8.62, "vstat": "偏低", "manager": "艾小军", "tenure": "国泰指数投资部负责人，旗舰证券 ETF",
+        "close": "券商板块偏强（中金+5%）", "abs_undervalued": False,
+        "scores": {"估值水平": 8.0, "行业前景": 9.0, "经理能力": 8.5, "持仓结构": 8.0, "风险收益比": 8.0, "流动性": 9.5},
+        "dims": {
+            "估值水平": "PE 15.27，分位 <b>9.06%</b>（平安口径，低于 20%，偏低）；PB 1.35，分位 26.72%。<b>🔥 券商板块 PB 处近五年低分位</b>（中信 PB1.50/PE12.7、招商 PB1.53/PE14.3、中金 PB1.71/PE15.5），雪球列券商 PE 15 倍、历史分位约 3%，“低估值”属性获强化。",
+            "行业前景": "<strong>🔥 中金“三合一”获受理 + 发债翻倍 + 中报预增（重大催化）：</strong>中金公司吸收合并东兴/信达证券申请（交易金额 1138.54 亿）7/14 获证监会受理，进入监管审核；中金预计 2026H1 归母净利 77.08–82.27 亿（同比 +78%~90%）；年内券商境内发债超 1.35 万亿（同比近翻倍），首批 9 家券商中报全部预增（天风 +694%/中泰 +146%）；央行 1.4 万亿买断式逆回购今日落地呵护流动性。",
+            "经理能力": "艾小军为国泰指数投资部负责人，旗舰证券 ETF 规模超 500 亿，运作成熟。",
+            "持仓结构": "华泰证券、招商证券、广发证券等头部券商，分散度较好。",
+            "风险收益比": "中金三合一获受理 + 发债翻倍 + 中报预增 + 低 PB 多重红利，中期配置价值显著提升；但作为高 β 品种，短期随市场情绪与成交波动，7/15 科技回调下需防短线承压。",
+            "流动性": "规模 516 亿，全市场规模最大证券 ETF，流动性极佳。",
+        },
+        "verdict": "建议分批布局（偏多·较强，中金三合一获受理 + 发债翻倍 + 中报预增 + 低 PB + 央行放水）。",
+        "risks": [
+            "中报业绩兑现/不及预期的预期差",
+            "市场成交萎缩与 β 属性导致回撤剧烈",
+            "重组落地节奏与监管审批不确定、增资节奏",
+            "政策落地不及预期、系统性下跌的情绪外溢",
+        ],
+        "news": [
+            "7/14：中金公司吸收合并东兴/信达证券（交易金额 1138.54 亿）获证监会受理，进入监管审核（证券时报/澎湃/网易）。",
+            "中金预计 2026H1 归母净利 77.08–82.27 亿，同比 +78%~90%（公司预告）。",
+            "年内券商境内发债超 1.35 万亿（同比近翻倍）；首批 9 家券商中报全部预增（天风 +694%/中泰 +146%）（每经/腾讯）。",
+        ],
+        "info": "华泰/招商/广发等头部券商权重；经理艾小军长期管理旗舰产品，无变更。",
+    },
+    {
+        "code": "512800", "name": "华宝中证银行ETF", "index": "中证银行 (SZ399986)",
+        "type": "股票型 ETF", "scale": 106.0, "pe": 6.65, "pe_pct": 26.47, "pb": 0.63, "pb_pct": 27.24,
+        "div": 5.13, "roe": 9.53, "vstat": "绝对低估", "manager": "丰晨成", "tenure": "华宝指数团队，跟踪误差约 1.06%",
+        "close": "银行板块拉升（防御占优）", "abs_undervalued": True,
+        "scores": {"估值水平": 7.5, "行业前景": 7.0, "经理能力": 8.0, "持仓结构": 8.0, "风险收益比": 7.5, "流动性": 8.5},
+        "dims": {
+            "估值水平": "PE 6.65（绝对低），平安口径 PE 分位 26.47%（分母盈利周期低位）；<b>PB 0.63、股息率 5.13%</b>，资产端与分红处于绝对历史底部——雪球标注“估值偏低”。截至 7/8 42 家 A 股上市银行中 15 家股息率超 5%（华夏、兴业超 6%），十年国债收益率约 1.73%。<em>（绝对低估豁免：虽 PE 分位 > 20%，但破净 + 高股息构成绝对低估，纳入低估池）</em>。",
+            "行业前景": "<strong>六大行分红超 4200 亿 + 防御占优：</strong>六大国有大行 2025 年度合计分红突破 4200 亿（同比增、比例稳定 30%+）。但投资逻辑正由“高股息 + 低估值”充分定价转向基本面驱动：部分银行每股股息因股本扩张摊薄下降、证金一季度减持、险资增持（持银行约总股本 4.9%）使资金结构由交易型转向长期配置。7/16 盘前科技回调，防御属性占优。",
+            "经理能力": "丰晨成接管银行/医疗等 ETF，华宝指数团队运作稳健，跟踪误差约 1.06%。",
+            "持仓结构": "国有大行 + 股份行 + 城商行（招行、兴业、工行、农行、交行等前十大权重合计 64.29%），高股息特征鲜明。",
+            "风险收益比": "破净 PB + 高股息 + 险资抱团构成“压舱石”，7/16 盘前防御占优；但分红兑现后逻辑切换至基本面验证，需防交易型资金获利了结。",
+            "流动性": "规模约 106 亿，成交活跃，流动性良好。",
+        },
+        "verdict": "建议长期配置（偏多·较强，破净高股息 + 险资，防御占优但防分红兑现获利了结）。",
+        "risks": [
+            "分红兑现后逻辑切换与交易型资金获利了结、每股股息摊薄",
+            "证金减持、净息差持续收窄",
+            "地产与城投不良暴露、避险抱团一旦瓦解的回撤",
+            "美伊/加息扰动外围流动性、宏观经济下行",
+        ],
+        "news": [
+            "六大国有大行 2025 年度合计分红超 4200 亿（同比增、比例稳定 30%+）（公开披露）。",
+            "险资持有银行约总股本 4.9%、按自由流通股近 10%，资金结构由交易型转向长期配置（市场观察）。",
+            "截至 7/8，42 家 A 股上市银行中 15 家股息率超 5%（华夏、兴业超 6%）（雪球/公开数据）。",
+        ],
+        "info": "招行/兴业/工行/农行/交行等高股息权重；经理丰晨成（接替原经理），运作稳健。",
+    },
+    {
+        "code": "008928", "name": "宏利消费红利指数A", "index": "中证主要消费红利 (CSIH30094)",
+        "type": "指数型", "scale": 6.54, "pe": 17.49, "pe_pct": 11.45, "pb": 3.24, "pb_pct": 0.20,
+        "div": 4.58, "roe": 18.95, "vstat": "极低", "manager": "李婷婷", "tenure": "指数化跟踪为主，规模较小",
+        "close": "食品饮料ETF 收 +4.48%", "abs_undervalued": False,
+        "scores": {"估值水平": 9.0, "行业前景": 7.0, "经理能力": 7.5, "持仓结构": 8.0, "风险收益比": 7.5, "流动性": 5.0},
+        "dims": {
+            "估值水平": "PE 17.49，分位 <b>11.45%</b>（平安口径，极低）；PB 3.24，分位 0.20%；股息率 4.58%、ROE 18.95%——“低估值 + 高分红 + 高盈利”三重属性。",
+            "行业前景": "<strong>《扩大消费“十五五”规划》直接受益 + 消费防御：</strong>规划“社零 60 万亿 + 增加财产性收入”为消费提供中长期政策底盘；7/15 消费（含白酒）展现强韧性（食品饮料 ETF +4.48%、酒 ETF +5.05%）。广发证券指食品饮料相对全 A 估值创二十年新低。<strong>⚠️ 但上半年社零同比仅 +1.3%、商品零售 +1.1%，服务零售 +5.3% 跑赢——消费复苏结构分化，“商品弱”对主要消费红利构成短期压制，全面修复待居民收入预期改善与双节验证。</strong>",
+            "经理能力": "李婷婷管理，指数化跟踪为主；规模较小，运作成本低。",
+            "持仓结构": "主要消费领域高股息龙头（食品饮料、农牧等），防御属性强。",
+            "风险收益比": "7/15 消费防御抗跌 + 白酒回暖共振 + 消费规划直接催化；估值分位极低、分红优，长期赔率优，但短期受社零商品端偏弱（+1.3%）压制弹性。",
+            "流动性": "⚠️ 规模仅 6.54 亿，属中小规模指数基金，大额申赎冲击与折溢价需关注。",
+        },
+        "verdict": "建议定投、关注流动性（偏多·较强，消费规划直接受益 + 白酒回暖共振；但因规模偏小，单笔不宜过大）。",
+        "risks": [
+            "⚠️ 规模小导致流动性一般、大额申赎冲击",
+            "消费复苏节奏不确定（社零商品端仅 +1.3%）",
+            "红利因子阶段性跑输成长、轮动风格切换至进攻",
+            "系统性下跌的情绪外溢",
+        ],
+        "news": [
+            "国务院《扩大消费“十五五”规划》：社零 60 万亿、增加居民财产性收入（财经网）。",
+            "7/15：食品饮料 ETF +4.48%、酒 ETF +5.05%，消费防御抗跌（腾讯 ETF 日报）。",
+            "广发证券：食品饮料相对全 A 估值创二十年新低，白酒/大众品筑底（研报）。",
+        ],
+        "info": "主要消费高股息龙头（食品饮料/农牧）；经理李婷婷，规模 6.54 亿偏小。",
+    },
+    {
+        "code": "168001", "name": "国寿安保中证养老产业指数增强", "index": "养老产业 (SZ399812)",
+        "type": "指数增强型", "scale": 1.27, "pe": 11.11, "pe_pct": 0.86, "pb": 1.71, "pb_pct": 1.40,
+        "div": 2.82, "roe": 15.58, "vstat": "极低", "manager": "长期任职（自 2018）", "tenure": "转型指数增强后一直任职，无近期变更",
+        "close": "养老/医药/消费三重受益", "abs_undervalued": False,
+        "scores": {"估值水平": 9.0, "行业前景": 8.0, "经理能力": 8.0, "持仓结构": 8.0, "风险收益比": 7.0, "流动性": 3.5},
+        "dims": {
+            "估值水平": "PE 11.11，分位 <b>0.86%</b>（平安口径，极低，全样本最低之一）；PB 1.71，分位 1.40%；ROE 15.58%。估值处历史最底部。",
+            "行业前景": "<strong>消费/医药/养老三重受益（医疗 7/15 领涨强化医药端）：</strong>《扩大消费“十五五”规划》单列“扩大养老消费”——健全县乡村三级养老服务网络、医养结合、银发经济、普惠托育；叠加 7/15 医疗全天领涨（医药端直接受益）。个人养老金基金数量达 321 只（扩容），银发经济政策底盘清晰。但短期弹性仍受防御板块整体节奏约束。",
+            "经理能力": "✅ 经同花顺 F10/国寿安保官网确认，基金由自 2018 年 1 月起任职的经理长期管理，转型指数增强后一直任职，<b>非 2026 年新任、无近期变更</b>。增强策略存在跟踪偏离，近 5 年年化 +6.92%、最大回撤 43.85%。",
+            "持仓结构": "医药、消费、金融等养老相关龙头，行业分散度较高，防御属性强。",
+            "风险收益比": "估值极低提供安全边际，混合防御属性在政策催化下占优（7/15 医药领涨共振），但增强策略与指数有偏离，历史回撤较大、流动性偏弱。",
+            "流动性": "⚠️ 规模约 1.27 亿，偏小；流动性较弱，仅适合小资金参与。",
+        },
+        "verdict": "建议买入、仅小资金（中性偏多，估值极低 + 消费/医药/养老三重受益；但规模小、流动性弱，仅建议小资金配置）。",
+        "risks": [
+            "⚠️ 规模过小导致清盘/流动性风险（约 1.27 亿）",
+            "增强策略跑输指数、系统性下跌的情绪外溢",
+            "防御板块节奏约束短期弹性",
+        ],
+        "news": [
+            "《扩大消费“十五五”规划》单列“扩大养老消费”：三级养老服务网络、医养结合、银发经济（财经网）。",
+            "个人养老金基金数量达 321 只（扩容），货架“上新”（财经网）。",
+            "7/15：医疗全天领涨，与养老成分（医药端）共振（新浪/腾讯）。",
+        ],
+        "info": "医药/消费/金融等养老龙头，分散度高；经理自 2018 长期任职已确认，无变更。",
+    },
+]
+
+# ----------------------------------------------------------------------------
+# 3. 筛选 + 评分引擎
+# ----------------------------------------------------------------------------
+def screen(fund):
+    """PE 历史分位 < 20% 通过；否则若 PB 绝对低估（破净+高股息）豁免通过；否则破线。"""
+    if fund["pe_pct"] < 20:
+        return True, f"PE 分位 {fund['pe_pct']:.2f}% < 20%，通过低估筛选"
+    if fund.get("abs_undervalued") and fund["pb"] < 1.0 and fund["div"] >= 4.0:
+        return True, (f"PE 分位 > 20% 但 PB {fund['pb']:.2f} 破净 + 股息率 "
+                      f"{fund['div']:.2f}% 绝对低估，豁免通过")
+    return False, f"PE 分位 {fund['pe_pct']:.2f}% ≥ 20% 且非绝对低估，破线、退出深度低估判定"
+
+
+def total_score(fund):
+    return round(sum(fund["scores"][d] * WEIGHTS[d] for d in DIM_ORDER), 2)
+
+
+def verdict(total, passes):
+    if not passes:
+        return "谨慎买入（定投·破线）"
+    if total >= 7:
+        return "建议买入"
+    if total >= 5:
+        return "谨慎买入"
+    return "不建议买入"
+
+
+for f in FUNDS:
+    passes, reason = screen(f)
+    f["_pass"] = passes
+    f["_screen_reason"] = reason
+    f["_total"] = total_score(f)
+    f["_verdict_label"] = verdict(f["_total"], passes)
+
+# ----------------------------------------------------------------------------
+# 4. HTML 生成
+# ----------------------------------------------------------------------------
+CSS = """
+  :root{
+    --bg:#0f1419; --card:#1a2027; --ink:#e6edf3; --sub:#9aa7b4;
+    --line:#2a333d; --brand:#ff4d5e; --brand2:#4aa3ff;
+    --good:#3fb950; --warn:#d29922; --bad:#f85149; --low:#0d2818; --high:#2d1416;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+  header{background:linear-gradient(135deg,#c8102e,#7a0a1c);color:#fff;border-radius:16px;
+    padding:30px 32px;margin-bottom:24px;box-shadow:0 8px 24px rgba(200,16,46,.25)}
+  header h1{font-size:25px;letter-spacing:.5px;margin-bottom:8px}
+  header .meta{font-size:13px;opacity:.92}
+  header .meta b{font-weight:600}
+  h2{font-size:19px;margin:30px 0 14px;padding-left:11px;border-left:4px solid var(--brand);color:var(--ink)}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--brand2)}
+  p{margin:8px 0;color:var(--sub)}
+  .lead{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:8px}
+  .lead strong{color:var(--ink)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .n{font-size:22px;font-weight:700;color:var(--brand)}
+  .kpi .l{font-size:12px;color:var(--sub);margin-top:2px}
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.3);font-size:13px;margin:10px 0}
+  th,td{padding:10px 9px;text-align:center;border-bottom:1px solid var(--line)}
+  th{background:#29333d;color:#e6edf3;font-weight:600;font-size:12.5px}
+  tbody tr:nth-child(even){background:#161b21}
+  td.l,th.l{text-align:left}
+  .pill{padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600}
+  .p-low{background:var(--low);color:var(--good)}
+  .p-mid{background:#3a2e10;color:var(--warn)}
+  .p-abs{background:#10263d;color:var(--brand2)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0;
+    box-shadow:0 2px 12px rgba(0,0,0,.25)}
+  .card .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;border-bottom:1px dashed var(--line);
+    padding-bottom:10px;margin-bottom:12px}
+  .card .hd .code{font-size:13px;color:var(--brand);font-weight:700;background:var(--low);padding:2px 9px;border-radius:6px}
+  .card .hd .nm{font-size:18px;font-weight:700}
+  .card .hd .tag{font-size:12px;color:var(--sub)}
+  .row{display:grid;grid-template-columns:130px 1fr;gap:8px 14px;margin:7px 0;font-size:14px}
+  .row .k{color:var(--sub);font-weight:600}
+  .row .v{color:var(--ink)}
+  .verdict{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:14px}
+  .v-buy{background:var(--low);border:1px solid #1f6b3f}
+  .v-mid{background:#3a2e10;border:1px solid #6b5410}
+  .v-watch{background:#10263d;border:1px solid #1f4a6b}
+  .verdict b{color:var(--brand)}
+  .risk{background:var(--high);border:1px solid #6b2420;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:13.5px;color:#f0a8a2}
+  .risk b{color:var(--bad)}
+  .scores{margin-top:12px;background:#161b21;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  .scores table{box-shadow:none;margin:0;background:transparent;font-size:12.5px}
+  .scores td,.scores th{padding:5px 8px;border-bottom:1px solid var(--line)}
+  .scores .tot{color:var(--brand);font-weight:700}
+  ul{margin:6px 0 6px 20px;color:var(--sub);font-size:13.5px}
+  ul li{margin:4px 0}
+  .note{font-size:12px;color:#6b7884;margin-top:6px}
+  .summary td .ok{color:var(--good);font-weight:700}
+  .summary td .wt{color:var(--warn);font-weight:700}
+  footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:#6b7884}
+  .src{background:#161b21;border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:12.5px;color:var(--sub);margin-top:10px}
+  .perf{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+  .perf .it{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+  .perf .it .nm{color:var(--sub);font-size:12px}
+  .perf .it .ch{font-size:18px;font-weight:700;margin-top:2px}
+  .up{color:var(--good)} .down{color:var(--bad)}
+  .flash{background:#0d2818;border:1px solid #1f6b3f;border-radius:12px;padding:14px 18px;margin:14px 0;font-size:14px}
+  .flash b{color:var(--good)}
+  .flag{background:var(--high);border:1px solid #6b2420;border-radius:10px;padding:11px 14px;margin:12px 0;font-size:13.5px;color:#f0a8a2}
+  .flag b{color:var(--bad)}
+  .snap{background:#10263d;border:1px solid #1f4a6b;border-radius:10px;padding:11px 14px;margin:12px 0;font-size:13px;color:#a9d3f5}
+  .snap b{color:var(--brand2)}
+  .bump{background:#1a1020;border:1px solid #6b2a8a;border-radius:10px;padding:11px 14px;margin:12px 0;font-size:13.5px;color:#d8b8f0}
+  .bump b{color:#c98bff}
+"""
+
+def esc(s):
+    return s  # 内容已为受控 HTML 片段
+
+def verdict_class(label):
+    if "建议买入" in label and "谨慎" not in label:
+        return "v-buy"
+    if "谨慎" in label or "定投" in label:
+        return "v-mid"
+    return "v-watch"
+
+def build_html():
+    n_pass = sum(1 for f in FUNDS if f["_pass"])
+    # 对比表行
+    rows = []
+    for f in FUNDS:
+        vcls = "p-low" if f["vstat"] in ("极低",) else ("p-abs" if "绝对" in f["vstat"] else "p-mid")
+        okcls = "ok" if ("建议买入" in f["_verdict_label"] and "谨慎" not in f["_verdict_label"]) else ("wt" if "谨慎" in f["_verdict_label"] or "定投" in f["_verdict_label"] else "wt")
+        rows.append(
+            f"<tr><td class='l'>{f['index'].split(' ')[0]}</td><td>{f['code']}</td><td class='l'>{f['name']}</td>"
+            f"<td>{f['manager'].split('（')[0]}</td><td>{f['scale']}</td><td>{f['pe']}</td>"
+            f"<td>{f['pe_pct']:.2f}%</td><td>{f['pb']}</td><td>{f['pb_pct']:.2f}%</td>"
+            f"<td>{f['div']:.2f}%</td><td>{f['roe']:.2f}%</td>"
+            f"<td><span class='pill {vcls}'>{f['vstat']}</span></td>"
+            f"<td class='tot'>{f['_total']:.2f}</td>"
+            f"<td><span class='{okcls}'>{f['_verdict_label']}</span></td></tr>"
+        )
+    compare_rows = "\n    ".join(rows)
+
+    # 逐只卡片
+    cards = []
+    for f in FUNDS:
+        dim_rows = "".join(
+            f"<div class='row'><span class='k'>{d}</span><span class='v'>{f['dims'][d]}</span></div>"
+            for d in DIM_ORDER
+        )
+        score_rows = "".join(
+            f"<tr><td class='l'>{d}</td><td>{f['scores'][d]:.1f}</td><td>{WEIGHTS[d]*100:.0f}%</td></tr>"
+            for d in DIM_ORDER
+        )
+        risk_items = "".join(f"<li>{r}</li>" for r in f["risks"])
+        news_items = "".join(f"<li>{n}</li>" for n in f["news"])
+        vcls = verdict_class(f["_verdict_label"])
+        screen_badge = ("✅ 通过低估筛选" if f["_pass"] else "⚠️ 破线（PE 分位 ≥ 20%）")
+        cards.append(f"""
+<div class="card">
+  <div class="hd"><span class="code">{f['code']}</span><span class="nm">{f['name']}</span>
+    <span class="tag">跟踪 {f['index']}｜{f['type']}｜规模 {f['scale']} 亿｜经理 {f['manager']}｜{f['close']}</span></div>
+{dim_rows}
+  <div class="scores">
+    <div style="font-size:13px;color:var(--sub);margin-bottom:6px"><b>六维评分明细（权重→加权总分）</b>　{screen_badge}：{f['_screen_reason']}</div>
+    <table><thead><tr><th class="l">维度</th><th>得分(0-10)</th><th>权重</th></tr></thead><tbody>
+{score_rows}
+      <tr><td class="l"><b>加权总分</b></td><td class="tot">{f['_total']:.2f}</td><td>100%</td></tr>
+    </tbody></table>
+  </div>
+  <div class="verdict {vcls}"><b>评估结论：{f['_verdict_label']}。</b>{f['verdict']}</div>
+  <div class="risk"><b>风险提示：</b></div><ul>{risk_items}</ul>
+  <div class="note"><b>信息补充（近 3 个月）：</b>{f['info']}</div>
+  <div class="note"><b>相关新闻 / 行业分析 / 持仓变动 / 经理观点：</b></div><ul>{news_items}</ul>
+</div>""")
+    cards_html = "\n".join(cards)
+
+    # 结论汇总
+    summ_rows = []
+    for f in FUNDS:
+        okcls = "ok" if ("建议买入" in f["_verdict_label"] and "谨慎" not in f["_verdict_label"]) else "wt"
+        summ_rows.append(
+            f"<tr><td class='l'>{f['name']}</td><td>{f['code']}</td><td>{f['pe_pct']:.2f}%</td>"
+            f"<td class='l'>{f['_verdict_label']}（总分 {f['_total']:.2f}）</td>"
+            f"<td><span class='{okcls}'>{f['_verdict_label']}</span></td></tr>"
+        )
+    summ_html = "\n    ".join(summ_rows)
+
+    html = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>低估基金筛选与综合评估报告 · {RUN_TS}（盘前快照）</title>
+<style>{CSS}</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>低估基金筛选与综合评估报告</h1>
+  <div class="meta">
+    生成日期：<b>{GEN_LABEL}</b> ｜ 估值快照：<b>{VAL_SNAPSHOT}</b> ｜
+    数据来源：<b>{SRC_LINE}</b><br>
+    筛选标准：指数 PE 历史分位 &lt; 20%（或 PB 绝对低估豁免）且基本面无重大恶化 ｜ 买入规则：总分≥7 建议买入 / 5–7 谨慎买入 / &lt;5 不建议
+  </div>
+</header>
+
+<div class="snap">
+  <b>⚠️ 估值口径与快照时点说明：</b>本次为 <b>{RUN_TS} 盘前自动化执行</b>。① <b>基金估值分位沿用平安证券指数信号灯最新口径（基准日 7/15 收盘，近十年分位）</b>，日内稳定、与 7/14、7/15 版一致。② <b>盘前催化（7/16 早间公开资讯核验）</b>：央行 1.4 万亿买断式逆回购今日落地（6 个月期单次规模新高，本周净投放 5000 亿、本月累计 7000 亿）；7 月股票型 ETF 净流入近 2000 亿、国家队护盘信号显现；隔夜美股三大指数收涨（道 +0.29%/纳 +0.62%/标普 +0.38%）、<b>中概金龙指数大涨近 4%、阿里 +8%</b>，但存储芯片走弱（费半 -2.08%、美光 -8%）；<b>美伊冲突升级（美军 7/16 凌晨对伊朗第二波打击）、油价三连涨（WTI 79.60/布伦特 84.95）</b>；美国 6 月 PPI 同比 5.5% 低于预期、通胀降温。③ 结构性低估格局（8 只基金估值仍处历史极低或破净绝对低估）未变。
+</div>
+
+<div class="lead">
+  <strong>综合视角（7/15 收盘 + 7/16 盘前）：</strong>7/15 A 股呈<b>剧烈结构分化</b>——沪指 <b>-0.29%</b>、深成指 -0.97%、创业板 -1.21%、<b>科创50 重挫 -4.25%</b>，半导体/存储产业链全天集体跳水；与之相对，<b>医药/白酒/零售/游戏逆势领涨</b>（医疗ETF +4.08%、酒ETF +5.05%、游戏ETF +5.97%）。7/16 盘前，<b>流动性与外围双线改善但地缘对冲</b>：央行 1.4 万亿逆回购落地 + ETF 净流入近 2000 亿托底；隔夜中概金龙指数 +近 4%、阿里 +8% 利好中概互联/恒科，但<b>美伊冲突升级、油价三连涨</b>与美联储沃什偏鹰构成扰动。结构性低估格局未变：<strong>医疗(512170) 维持“强烈偏多·领涨”最优先；中概互联(513050) 受中概大涨 + 南向放量仍最优先；白酒(161725)/券商(512880)/消费红利(008928) 偏多·较强、银行(512800) 偏多·较强、恒科(513180) 破线定投、养老(168001) 关注小资金。</strong>
+</div>
+
+<div class="flash">
+  <b>✅ 7/16 盘前关键变化（自动化执行 · 公开资讯核验）：</b>① <b>流动性拐点确认：</b>央行今日开展 <b>1.4 万亿 6 个月期买断式逆回购</b>（单次规模新高），本周净投放 5000 亿、本月累计 7000 亿；<b>7 月股票型 ETF 净流入近 2000 亿</b>，国家队护盘信号显现，机构预判周四或低开高走/探底回升。② <b>🔥 外围：中概大涨但芯片走弱 + 美伊升级：</b>隔夜美股三大指数收涨（道 +0.29%/纳 +0.62%/标普 +0.38%），<b>纳斯达克中国金龙指数大涨近 4%、阿里巴巴 +8%、小鹏 +5%</b>；但费城半导体指数 -2.08%、美光 -8%、SK 海力士 -9%；<b>美伊冲突升级（美军 7/16 凌晨对伊朗第二波打击）、油价三连涨（WTI 79.60/布伦特 84.95）</b>；美国 6 月 PPI 同比 5.5% 低于预期，通胀降温。③ <b>🔥 医疗延续强势：</b>国家医保局 601+58 形式审查名单进入专家评审“大考”阶段；实验猴均价超 20 万/只（较 2025 底涨超 40%）印证 CRO 景气回升；上半年创新药对外授权 81 笔/约 1100 亿美元（达 2025 全年 80%）。④ <b>🔥 券商三重催化：</b>中金“三合一”重组（交易金额 1138.54 亿）7/14 获证监会受理、进入监管审核；中金预计 2026H1 净利 77–82 亿（同比 +78%~90%）；年内券商境内发债超 1.35 万亿（同比近翻倍）、首批 9 家中报全部预增。⑤ <b>消费规划底盘：</b>《扩大消费“十五五”规划》明确 2030 年社零 60 万亿；但上半年社零同比仅 +1.3%（商品端 +1.1% 偏弱），全面复苏待双节验证。⑥ <b>AI 事件：</b>WAIC2026（7/17–20 上海）临近，AI 智能眼镜迎新品潮、7 款 AI 手机备案（阿里千问集成苹果 AI）。
+</div>
+
+<div class="grid">
+  <div class="kpi"><div class="n">{len(FUNDS)}</div><div class="l">入选低估基金（通过筛选 {n_pass} 只）</div></div>
+  <div class="kpi"><div class="n">1.4万亿</div><div class="l">央行逆回购今日落地（本月净投放7000亿）</div></div>
+  <div class="kpi"><div class="n">+近4%</div><div class="l">中概金龙指数隔夜（阿里+8%）</div></div>
+  <div class="kpi"><div class="n">133.64亿</div><div class="l">南向 7/15 单日净买（加速托底）</div></div>
+  <div class="kpi"><div class="n">+4.08%</div><div class="l">医疗ETF 512170 7/15 收盘（领涨）</div></div>
+</div>
+
+<h2>零、7/16 盘前市场快照（7/15 收盘 + 隔夜美股 + 盘前催化）</h2>
+<p>2026-07-15 A 股剧烈结构分化：三大指数集体回调，但<b>科创50 重挫 -4.25%、半导体产业链集体跳水</b>，资金由高位科技向低位<b>医药/创新药/白酒/零售/游戏</b>切换；港股收盘强劲、南向加速净买。隔夜美股（7/15 北京凌晨）三大指数收涨、<b>中概金龙指数 +近 4%</b>，但存储芯片走弱、<b>美伊冲突升级油价三连涨</b>。7/16 盘前央行 1.4 万亿逆回购落地 + ETF 净流入近 2000 亿托底。数据来源：<a href="https://new.qq.com/rain/a/20260716A02DB000" target="_blank">陆家嘴财经早餐 7/16</a>、<a href="https://www.stcn.com/article/detail/4021999.html" target="_blank">证券时报 7/16 美股收评</a>、<a href="https://www.toutiao.com/article/7662880837074977316" target="_blank">今日头条 A股早报 7/16</a>。</p>
+
+<h3>7/15 A 股收盘（剧烈分化）</h3>
+<div class="perf">
+  <div class="it"><div class="nm">上证指数（7/15 收）</div><div class="ch down">-0.29%</div></div>
+  <div class="it"><div class="nm">深成指（7/15 收）</div><div class="ch down">-0.97%</div></div>
+  <div class="it"><div class="nm">创业板指（7/15 收）</div><div class="ch down">-1.21%</div></div>
+  <div class="it"><div class="nm">科创50（7/15 收）</div><div class="ch down">-4.25%</div></div>
+  <div class="it"><div class="nm">全天成交（7/15）</div><div class="ch">2.57万亿·缩量</div></div>
+  <div class="it"><div class="nm">医疗ETF 512170（7/15 收）</div><div class="ch up">+4.08%</div></div>
+  <div class="it"><div class="nm">酒ETF鹏华 512690（7/15 收）</div><div class="ch up">+5.05%</div></div>
+  <div class="it"><div class="nm">游戏ETF（7/15 收）</div><div class="ch up">+5.97%</div></div>
+  <div class="it"><div class="nm">半导体产业链（7/15）</div><div class="ch down">集体跳水</div></div>
+</div>
+
+<h3>隔夜美股（7/15 北京凌晨）+ 盘前催化</h3>
+<div class="perf">
+  <div class="it"><div class="nm">道指（7/15 收）</div><div class="ch up">+0.29%</div></div>
+  <div class="it"><div class="nm">纳指（7/15 收）</div><div class="ch up">+0.62%</div></div>
+  <div class="it"><div class="nm">标普500（7/15 收）</div><div class="ch up">+0.38%</div></div>
+  <div class="it"><div class="nm">中概金龙指数（隔夜）</div><div class="ch up">+近4%</div></div>
+  <div class="it"><div class="nm">阿里巴巴（隔夜）</div><div class="ch up">+8%</div></div>
+  <div class="it"><div class="nm">费城半导体（隔夜）</div><div class="ch down">-2.08%</div></div>
+  <div class="it"><div class="nm">WTI 原油（7/15）</div><div class="ch">79.60·三连涨</div></div>
+  <div class="it"><div class="nm">布伦特（7/15）</div><div class="ch">84.95·三连涨</div></div>
+  <div class="it"><div class="nm">央行逆回购（今日落地）</div><div class="ch up">1.4万亿</div></div>
+  <div class="it"><div class="nm">股票型ETF净流入（7月）</div><div class="ch up">近2000亿</div></div>
+</div>
+
+<h2>一、核心指标对比表</h2>
+<p>估值分位取自<b>平安证券指数信号灯（基准日 7/15 收盘，近十年历史分位）</b>；基金基本面（PE/PB/股息率/ROE/规模）沿用近期披露（日内稳定）。<b>恒生科技 PE 分位 35.34% 仍破 20% 筛选线（平安口径）</b>，按规则退出“深度低估”判定、仅作定投参与；<b>中证银行 PE 分位 26.47% 偏高（盈利周期低位），但 PB 0.63、股息率 5.13% 处绝对历史底部，按“绝对低估”豁免纳入低估池</b>。雪球/天天基金/蛋卷最新估值印证：中概互联50 PE16.34（分位 2.20%）、中证医疗 PE 28.91（成立后 12.21% 分位）、中证白酒近十年 1.5%–11.96% 分位、券商 PE 15 倍（分位约 3%）——均处历史极低。</p>
+<table>
+  <thead>
+    <tr>
+      <th class="l">跟踪指数</th><th>基金代码</th><th class="l">基金简称</th><th>基金经理</th>
+      <th>规模(亿)</th><th>PE</th><th>PE分位</th><th>PB</th><th>PB分位</th><th>股息率</th><th>ROE</th><th>估值状态</th><th>综合分</th><th>建议</th>
+    </tr>
+  </thead>
+  <tbody>
+    {compare_rows}
+  </tbody>
+</table>
+<p class="note">注：① 中证银行 PE 分位 26.47%（平安口径）偏高，系盈利（分母）处于周期低位所致；其 PB 0.63、股息率 5.13%（2026 分红季）均处绝对历史底部，按“绝对低估”豁免纳入低估池。② <b>恒生科技 PE 分位 35.34%（平安口径）仍突破 20% 筛选线</b>，严格按“PE 分位&lt;20%”标准退出深度低估判定；逻辑为“估值回落 + 政策 + 南向”而非“深度价值”。③ 估值分位采用平安证券指数信号灯口径（基准 7/15 收盘，近十年分位）。④ 综合分 = 六维加权（估值20%/行业前景20%/经理能力12%/持仓结构13%/风险收益比25%/流动性10%）。</p>
+
+<h2>二、逐只基金深度评估（含六维评分明细）</h2>
+{cards_html}
+
+<h2>三、评估结论汇总</h2>
+<table class="summary">
+  <thead>
+    <tr><th class="l">基金</th><th>代码</th><th>PE分位(平安)</th><th class="l">综合评估（总分）</th><th>是否建议买入</th></tr>
+  </thead>
+  <tbody>
+    {summ_html}
+  </tbody>
+</table>
+<p class="note">* 恒生科技 PE 分位 35.34%（平安口径）破 20% 线，按筛选规则退出深度低估、仅作定投；中证银行以 PB/股息率衡量为“绝对低估”豁免纳入。本表结论基于 7/15 收盘全天行情（剧烈分化：科创50 -4.25%、半导体跳水、医药/白酒/游戏逆势领涨——医疗 +4.08%、酒ETF +5.05%、游戏ETF +5.97%）+ 7/16 盘前催化（央行 1.4 万亿逆回购落地、ETF 净流入近 2000 亿、中概金龙指数 +近 4%/阿里 +8%、美伊冲突升级油价三连涨、医保目录进专家评审、实验猴翻倍印证 CRO 景气、中金三合一获受理 + 中金 H1 净利 +78~90%）+ 南向加速托底（港股收盘恒科 +1.31%、7/15 单日净买 133.64 亿）+ 上半年 GDP +4.7%（Q2 +4.3%）+ 上半年社零同比 +1.3%（商品端偏弱）。医疗(512170) 维持“强烈偏多·领涨”最优先。</p>
+
+<h2>四、综合风险提示</h2>
+<ul>
+  <li><b>低估值陷阱：</b>低 PE/PB 可能反映盈利恶化预期（如银行息差、白酒业绩放缓），“便宜”不等于“会涨”，需确认基本面未重大恶化（当前银行/白酒基本面边际企稳，暂未恶化）。</li>
+  <li><b>⚠️ 7/15 剧烈结构分化与局部再平衡：</b>科创50 重挫 -4.25%、半导体/存储产业链集体跳水，资金由高位科技切向低位医药/消费/白酒/游戏，<b>成长→低位价值/防御的再平衡加剧</b>；低估板块间接受益，但需防“越跌越便宜但迟迟不涨”的耐心考验，以及风格剧烈切换带来的净值波动。</li>
+  <li><b>⚠️ 美伊冲突升级与油价三连涨（7/16 新变量）：</b>美军 7/16 凌晨对伊朗发动第二波打击，WTI 79.60/布伦特 84.95 三连涨；地缘风险推升避险与输入性通胀预期，对港股科技/QDII 及全球风险资产构成短线扰动，与“中概大涨 + 加息概率骤降”形成对冲。</li>
+  <li><b>⚠️ 医疗单日涨幅较大后的获利回吐：</b>7/15 医疗ETF(512170) 收 +4.08%、全天超百亿主力净买，情绪与资金高度集中；虽逻辑强化，但单日急涨后短线获利回吐压力显著，建议以定投平滑、勿追高单笔重仓。</li>
+  <li><b>⚠️ 恒生科技估值破线（平安口径 35.34%）：</b>静态 PE 分位仍高于 20% 筛选阈值；严格按“PE分位&lt;20%”标准应退出深度低估池；当前逻辑为“估值回落 + 政策 + 南向托底”而非“深度价值”，<b>追高回踩风险仍存</b>，建议定投、勿单笔重仓。</li>
+  <li><b>⚠️ 券商中报业绩兑现风险：</b>“中金三合一获受理 + 发债翻倍 + 中报预增”为中期强催化、PB 近五年低分位，但需防中报正式披露后的“利好兑现”回落，且作为高 β 品种短期随市场情绪波动（7/15 受科技回调拖累 β 偏弱）；重组进度与业绩持续性待验证。</li>
+  <li><b>⚠️ 银行分红落地后逻辑切换：</b>六大行 2025 年度分红超 4200 亿（同比增、比例稳定 30%+），“高股息 + 低估值”逻辑已较充分定价；部分银行每股股息因股本扩张摊薄、证金减持，投资逻辑转向净息差/资产质量/盈利修复等基本面验证，需防分红兑现后交易型资金获利了结。</li>
+  <li><b>⚠️ 白酒机构分歧与仍负增长 + 社零偏弱：</b>高盛“最坏已过” vs 中酒协“持续收缩”；26Q1 降幅虽大幅收窄但仍为同比负增，<b>上半年社零同比仅 +1.3%、商品零售 +1.1%</b>——商品消费偏弱，全面复苏待中秋国庆双节动销验证，短期预期差风险大。</li>
+  <li><b>⚠️ 消费规划落地节奏：</b>《扩大消费十五五规划》为中长期纲领（目标至 2030 年），对消费板块为“政策底盘”而非即时业绩兑现；短期仍取决于居民收入预期与实际消费数据（社零商品端偏弱），需防“政策预期→兑现落空”的回撤。</li>
+  <li><b>医疗短期政策扰动：</b>2026 版基药目录（9/1 施行）+ 医保目录形式审查进专家评审为中期催化，但中报预告、医保定价机制调整风声仍使医疗板块短期情绪脆弱；虽有创新药授权新高/实验猴翻倍/CRO 景气/政策多端共振，仍须以定投控节奏、待中报验证。</li>
+  <li><b>基金经理变更：</b>华宝医疗 ETF（512170）原经理胡洁 2026/2 离任、由张放接管（任职期收益约 -10.93%）；银行 ETF（512800）亦更换为丰晨成。<b>养老产业（168001）经理长期任职（自 2018）已确认，不确定性解除。</b></li>
+  <li><b>流动性风险：</b>消费红利（008928，6.5 亿）、养老产业（168001，~1.3 亿）规模偏小，大额申赎有冲击成本；ETF 交易新规（7/6 实施：尾盘改集合竞价）利于定价稳定，但需关注规则切换初期流动性结构变化。</li>
+  <li><b>宏观与定投纪律：</b>上半年 GDP +4.7%（Q2 +4.3% 较 Q1 回落）、央行 1.4 万亿逆回购呵护流动性，但美伊冲突 + 美联储沃什偏鹰扰动外围、南向加速后波动加大；低估板块反转往往需要时间，建议以定投/分批方式平滑成本，避免一次性重仓与止损恐慌。</li>
+</ul>
+
+<div class="src">
+  <b>数据来源：</b>天天基金网（fund.eastmoney.com）基金档案与净值；雪球/蛋卷估值中心（djfunds.imedao.com，指数估值：中概互联50 PE16.34/分位2.20%、中证医疗 PE27.81/分位9.96%）；平安证券指数信号灯（指数估值，基准 7/15 收盘，近十年历史分位）；东方财富（行情/股吧、中证医疗 PE 28.91/分位12.21%）；同花顺 iFinD（南向资金/基金规模）；搜狐基金（基金规模/经理/公告）；<b>A股收评（7/15 收盘）</b>：每日经济新闻（沪指-0.29%、科创50 -4.25%、成交2.57万亿、创新药主力净流入+77.28亿）、格隆汇/和讯、第一财经；<b>港股收评（7/15 收盘）</b>：证券时报（恒指+1.39%、恒科+1.31%、南向 133.64 亿、腾讯+3.9%、中金+5%）；<b>美股隔夜（7/15 北京凌晨）</b>：证券时报（道+0.29%/纳+0.62%/标普+0.38%、中概金龙指数+近4%、阿里+8%、费半-2.08%、美光-8%）、腾讯财经/今日头条（美伊冲突升级、油价三连涨、PPI 5.5% 低于预期）；<b>盘前（7/16）</b>：陆家嘴财经早餐 7/16、今日头条 A股早报 7/16（央行 1.4 万亿逆回购、ETF 净流入近 2000 亿）、同花顺 A股早报 7/16（WAIC/AI 手机备案、创新药游资加仓、算力租赁机构加仓）；<b>医保</b>：国家医保局 601+58 形式审查名单（7/14 公布，进入专家评审）、新京报/新快报（评审规则详解）、实验猴价格翻倍（同花顺）；<b>券商</b>：证券时报/澎湃/网易（中金三合一获证监会受理、交易金额 1138.54 亿、中金 H1 净利 +78~90%、发债超 1.35 万亿、首批 9 家中报预增）；<b>消费</b>：财经网（扩大消费十五五规划、个人养老金基金 321 只）、高盛（中证白酒近十年低位）；国家统计局（上半年 GDP+4.7%/社零+1.3%）。指数估值采用近十年历史分位，基金规模/净值以各平台最新披露为准；估值分位本次采用平安证券口径（基准 7/15 收盘）。
+</div>
+
+<footer>
+  ⚠️ 本报告由 AI 基于公开信息（天天基金、雪球/蛋卷基金、平安证券指数信号灯等平台）整理生成，仅供研究参考，<b>不构成任何投资建议或个股推荐</b>。基金有风险，投资需谨慎；估值分位会随行情变化，请以最新数据为准。本报告每日自动生成（本日为 {RUN_TS} <b>盘前快照 · 7/15 收盘估值 + 7/16 盘前催化 · 自动化执行</b>）。医疗(512170) 维持“强烈偏多·领涨”最优先；估值快照沿用平安证券指数信号灯口径（基准 7/15 收盘，与 7/14、7/15 版一致）；7/16 盘前新增：央行 1.4 万亿逆回购落地、ETF 净流入近 2000 亿、中概金龙指数 +近 4%/阿里 +8%、美伊冲突升级油价三连涨、医保目录进专家评审、实验猴翻倍、中金三合一获受理 + 中金 H1 净利 +78~90%。
+</footer>
+
+</div>
+</body>
+</html>"""
+    return html
+
+
+# ----------------------------------------------------------------------------
+# 5. index.html 更新
+# ----------------------------------------------------------------------------
+def update_index(report_file, summary_line):
+    idx = "index.html"
+    with open(idx, "r", encoding="utf-8") as fh:
+        content = fh.read()
+    # 更新“最新报告”卡片
+    content = content.replace(
+        '<a class="latest" href="fund-report-2026-07-15-17.html">',
+        f'<a class="latest" href="{report_file}">',
+    )
+    content = content.replace(
+        "<strong>2026-07-15 17:00</strong>",
+        f"<strong>{RUN_TS}</strong>",
+    )
+    content = content.replace(
+        "<span>收盘快照 · 7/15 全天收评 + 晚间宏观（美国CPI骤降 / 南向133.64亿 / 券商重组 / 医保目录）→</span>",
+        f"<span>{summary_line}</span>",
+    )
+    # 归档：在 <ul> 首个 <li> 前插入新条目
+    new_li = (f'        <li><a href="{report_file}"><time datetime="{RUN_DATE}">{RUN_TS}</time>'
+              f'<span class="arrow">查看报告 →</span></a></li>\n')
+    content = content.replace(
+        '      <ul>\n        <li><a href="fund-report-2026-07-15-17.html">',
+        '      <ul>\n' + new_li + '        <li><a href="fund-report-2026-07-15-17.html">',
+        1,
+    )
+    with open(idx, "w", encoding="utf-8") as fh:
+        fh.write(content)
+    # README 链接同步
+    readme = "README.md"
+    if os.path.exists(readme):
+        with open(readme, "r", encoding="utf-8") as fh:
+            rc = fh.read()
+        rc = rc.replace(
+            "fund-report-2026-07-15-17.html",
+            report_file,
+        )
+        with open(readme, "w", encoding="utf-8") as fh:
+            fh.write(rc)
+
+
+# ----------------------------------------------------------------------------
+# 6. 主流程
+# ----------------------------------------------------------------------------
+def main():
+    report_file = f"fund-report-{RUN_TS}.html"
+    html = build_html()
+    with open(report_file, "w", encoding="utf-8") as fh:
+        fh.write(html)
+    print(f"[OK] 报告已生成: {report_file}")
+
+    # 控制台摘要
+    print("\n=== 筛选 + 评分结果 ===")
+    for f in FUNDS:
+        print(f"  {f['code']} {f['name'][:14]:<14} 通过={f['_pass']!s:<5} 总分={f['_total']:.2f} -> {f['_verdict_label']}")
+
+    summary_line = (f"盘前快照 · 7/16 盘前（央行1.4万亿逆回购落地 + 中概金龙指数+近4%/阿里+8% "
+                    f"+ 美伊冲突升级油价三连涨 + 医保目录进专家评审 + 中金三合一获受理）→")
+    update_index(report_file, summary_line)
+    print(f"[OK] index.html / README.md 已更新指向 {report_file}")
+
+
+if __name__ == "__main__":
+    main()
