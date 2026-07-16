@@ -25,6 +25,7 @@ import datetime
 # ----------------------------------------------------------------------------
 RUN_DT = datetime.datetime.now()
 RUN_TS = RUN_DT.strftime("%Y-%m-%d-%H")          # 文件名用：fund-report-YYYY-MM-DD-HH
+RUN_TS_DISPLAY = RUN_DT.strftime("%Y-%m-%d %H:00")  # 展示用：2026-07-16 13:00（日期+空格+小时:分钟）
 RUN_DATE = RUN_DT.strftime("%Y-%m-%d")
 GEN_LABEL = f"{RUN_TS}（盘中快照 · 7/15 收盘估值 + 7/16 盘中行情）"
 VAL_SNAPSHOT = "2026-07-15 收盘（平安证券指数信号灯口径，近十年分位）"
@@ -605,7 +606,7 @@ def update_index(report_file, summary_line):
     if m:
         new_block = (f'<a class="latest" href="{report_file}">\n'
                      f'      <span class="label">最新报告</span>\n'
-                     f'      <strong>{RUN_TS}</strong>\n'
+                     f'      <strong>{RUN_TS_DISPLAY}</strong>\n'
                      f'      <span>{summary_line}</span>\n'
                      f'    </a>')
         content = content[:m.start()] + new_block + content[m.end():]
