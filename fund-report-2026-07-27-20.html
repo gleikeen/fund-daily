@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基金低估筛选与多Agent独立分析报告 · 2026-07-27 20:00</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{--bg:#0f172a;--card:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;
+        --buy:#16a34a;--cautious:#d97706;--hold:#dc2626;--accent:#2563eb;--soft:#f8fafc;}
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:var(--soft);color:var(--ink);line-height:1.6}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px}
+  header{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;border-radius:16px;padding:28px 32px;margin-bottom:20px}
+  header h1{margin:0 0 6px;font-size:26px}
+  header .sub{opacity:.85;font-size:14px}
+  .banner{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:14px}
+  .banner b{color:#1d4ed8}
+  h2{font-size:20px;margin:28px 0 12px;padding-left:10px;border-left:4px solid var(--accent)}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px;font-size:14px}
+  th,td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--line)}
+  th{background:#f1f5f9;font-weight:600;color:#334155}
+  td.name{text-align:left;font-weight:600}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}
+  .b-buy{background:var(--buy)} .b-caut{background:var(--cautious)} .b-hold{background:var(--hold)}
+  .score{font-weight:700;font-size:15px}
+  .card{background:#fff;border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05);border:1px solid var(--line)}
+  .card h3{margin:0 0 4px;font-size:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .card .meta{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .grid2{display:grid;grid-template-columns:340px 1fr;gap:20px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .mini{width:100%;border-collapse:collapse;font-size:13px}
+  .mini th,.mini td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+  .mini th{background:#f8fafc;color:#475569}
+  .num{text-align:right;font-weight:600}
+  .bull{color:var(--buy)} .bear{color:var(--hold)}
+  .sec{margin-top:14px}
+  .sec h4{margin:0 0 6px;font-size:14px;color:#334155;border-bottom:1px dashed var(--line);padding-bottom:4px}
+  ul{margin:6px 0;padding-left:18px;font-size:13px}
+  li{margin:3px 0}
+  .dim{font-size:13px;margin:4px 0}
+  .dim b{color:#1e40af}
+  .disclaimer{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:16px 18px;font-size:13px;margin-top:24px}
+  .foot{color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+  .pill{background:#f1f5f9;border-radius:6px;padding:2px 8px;font-size:12px;color:#475569}
+  .snap{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:13.5px}
+  .snap b{color:#15803d}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>基金低估筛选与多Agent独立价值评估报告</h1>
+  <div class="sub">生成时间：2026-07-27 20:00（收盘后晚盘 · 多Agent并行独立分析） ｜ 数据基准：平安证券指数信号灯（7/15 收盘）＋ 7/27 收盘行情 ＋ 7/27 盘前/盘中/晚间催化</div>
+</header>
+
+<div class="banner">
+  <b>多Agent架构说明：</b>本报告由 <b>TradingAgentTeam 交易分析团队</b> 驱动，严格遵循「<b>每只入选基金分配独立 Agent 与独立上下文、并行分析</b>」的拆分运行要求。
+  本次为 8 只入选基金各派发 <b>1 个独立 Agent（隔离上下文）</b>，并行执行完整六维量化评估（估值水平/行业前景/经理能力/持仓结构/风险收益比/流动性）＋ 买入建议 ＋ 支撑/风险因素（各≥2条）＋ 近3个月信息补充。
+  全场次共调度 <b>8 只基金 × 1 独立 Agent = 8 个并行 Agent</b>，各基金分析上下文互不干扰、结果独立汇总为逐只独立报告，再统一聚合综合分与买入建议（综合分 = 六维加权，估值/行业各0.20、风险收益0.25、持仓0.13、经理0.12、流动性0.10）。
+</div>
+
+<div class="snap">
+  <b>📊 7/27 收盘市场快照（周一 · 风险偏好显著回暖，较 7/24 风险-off 收盘全面反转）：</b>
+  A股三大指数集体走强——上证 <b>+1.15%</b>（3858.25）、深成指 <b>+2.72%</b>（14148.73）、创业板 <b>+3.16%</b>（3590.79）、科创50 +1.16%；沪深两市成交 <b>2.08 万亿</b>（较 7/24 的 1.94 万亿放量 1454 亿，放量反弹）；
+  全市场 <b>约 5193 只上涨（占比94%）、121 只涨停、仅 7 只跌停</b>，赚钱效应极强。领涨行业：电力设备（15股涨停）/电子（14）/医药生物（13），PCB概念掀涨停潮（AI算力需求爆发·高端PCB供不应求涨价3-4倍）。
+  重磅事件：<b>长鑫科技(688825)科创板上市首日 +465%、成交额超1400亿、打破A股单日成交历史纪录、盘中市值一度超工商银行</b>（获30家战略股东·阿里/小米/美团等认购144.37亿）；<b>宁德时代半年报净利433亿、日赚2.4亿、储能+87.5%、抛出200-400亿回购方案刷新A股纪录</b>；中证2000增强ETF +3.72% 等小盘指增成反弹最锋利矛；红利今日让位。
+  港股 7/27 收盘同步回暖：恒指 <b>+0.98%</b>（25207.18，重回25000上方）、国企 +1.14%、恒科 <b>+1.57%</b>（4702.05，小米 +7%/美团 +3%/腾讯 +近2%）；油价暴跌+暑运南方航空 +7%；石油股下挫（中石油 -3.5%）。
+  美股 7/27 盘前（北京早间）：纳指100 +1.24%、标普 +0.66%、道指 +0.47%（美伊暂停互袭·国际油价暴跌·布油86.67/WTI84.26跌破90·霍尔木兹通航谈判）。
+  <b>7/27 晚间/盘后催化延续：</b>央行将开展超 2 万亿隔夜逆回购（7/29-31 每日6000亿+8/3 3000亿）加码流动性；证监会多场座谈会部署稳市七方面、"两高"内幕交易新规7/27施行；长鑫上市改写半导体估值逻辑、存储国产替代加速；小米汽车技术发布会定档7/30；PCB/AI算力爆发；二季度公募盈利近1.94万亿、公募6月底39.67万亿。
+  <b>注：</b>数据采集前已清理本地 memory 缓存、规避历史数据干扰，本版行情均来自 7/27 当日公开资讯 fresh 核验；估值分位快照（基准 7/15 收盘）日内稳定。7/27 为周一，美股 7/27 正式交易日北京时间晚21:30后开市（美盘数据 pending），本版为收盘后晚盘快照，已计入 7/27 盘前/盘中/晚间催化。
+</div>
+
+<h2>一、基金核心指标对比表（多Agent独立综合分）</h2>
+<table>
+  <thead><tr><th>排名</th><th>代码</th><th>名称</th><th>类型</th><th>PE分位</th><th>规模(亿)</th><th>多Agent独立裁决</th><th>综合分</th><th>建议</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>512880</td><td class="name">国泰中证全指证券公司ETF</td><td>股票ETF</td><td>9.06%</td><td>516.3</td><td><span class="badge b-buy">BUY 分批</span></td><td class="score">7.95</td><td>建议买入</td></tr>
+    <tr><td>2</td><td>513050</td><td class="name">易方达中概互联网ETF</td><td>QDII-ETF</td><td>1.83%</td><td>364.49</td><td><span class="badge b-buy">BUY 分批/定投</span></td><td class="score">7.89</td><td>建议买入</td></tr>
+    <tr><td>3</td><td>161725</td><td class="name">招商中证白酒指数A</td><td>指数LOF</td><td>5.89%</td><td>206.9</td><td><span class="badge b-buy">BUY 左侧分批</span></td><td class="score">7.82</td><td>建议买入</td></tr>
+    <tr><td>4</td><td>512800</td><td class="name">华宝中证银行ETF</td><td>股票ETF</td><td>26.47%*</td><td>106.0</td><td><span class="badge b-buy">BUY 长期配置</span></td><td class="score">7.68</td><td>建议买入</td></tr>
+    <tr><td>5</td><td>512170</td><td class="name">华宝中证医疗ETF</td><td>股票ETF</td><td>10.67%</td><td>264.51</td><td><span class="badge b-buy">BUY 定投建仓·偏谨慎</span></td><td class="score">7.59</td><td>建议买入</td></tr>
+    <tr><td>6</td><td>008928</td><td class="name">宏利消费红利指数A</td><td>指数型</td><td>11.45%</td><td>6.54</td><td><span class="badge b-buy">BUY 定投</span></td><td class="score">7.52</td><td>建议买入</td></tr>
+    <tr><td>7</td><td>168001</td><td class="name">国寿安保中证养老产业指数增强</td><td>指数增强</td><td>0.86%</td><td>1.27</td><td><span class="badge b-caut">BUY 仅小资金</span></td><td class="score">7.28</td><td>建议买入(仅小资金)</td></tr>
+    <tr><td>8</td><td>513180</td><td class="name">华夏恒生科技ETF</td><td>QDII-ETF</td><td>35.34%</td><td>498.0</td><td><span class="badge b-caut">BUY 定投·破线</span></td><td class="score">7.10</td><td>谨慎买入(破线定投)</td></tr>
+  </tbody>
+</table>
+<p style="font-size:12px;color:var(--muted)">* 银行 PE 分位 26.47% 虽 &gt;20%，但因 PB 0.63 破净＋股息率 5.13% 构成「绝对低估」豁免通过。恒科 PE 分位 35.34% 破线，仅作定投参与。综合分 = 多Agent独立六维评分加权（估值/行业各0.20、风险收益0.25、持仓0.13、经理0.12、流动性0.10）。本版为 7/27 收盘后晚盘快照：7/27 风险-on 反弹（沪+1.15%/深+2.72%/创业+3.16%、成交2.08万亿）显著抬升风险偏好与多数基金六维评分。8 个独立 Agent 并行裁决结论：<b>7 只建议买入 + 恒科破线定投（谨慎买入）</b>。</p>
+
+<h2>二、逐只基金多Agent评分明细与买入建议</h2>
+
+<!-- ===== 基金1 券商 ===== -->
+<div class="card">
+  <h3>① 512880 国泰中证全指证券公司ETF <span class="badge b-buy">BUY 分批</span></h3>
+  <div class="meta">股票型ETF ｜ 规模516.3亿 ｜ PE 15.27（分位9.06%）｜ PB 1.35 ｜ ROE 8.62% ｜ 经理 艾小军 ｜ 综合分 <b>7.95</b></div>
+  <div class="grid2">
+    <div><canvas id="r1" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">8.8</td></tr>
+        <tr><td>行业前景</td><td class="num">7.5</td></tr>
+        <tr><td>经理能力</td><td class="num">8.5</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.8</td></tr>
+        <tr><td>风险收益比</td><td class="num">7.0</td></tr>
+        <tr><td>流动性</td><td class="num">9.0</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 分批）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值处近十年极低分位（PE 9.06%），低估筛选通过，底部配置价值显著；② 政策（证监会稳市七方面）+资金（股票型ETF连续11日净流入累计3567亿）+业绩（首批9家中报全部预增·天风+694%）三重催化共振，7/27长鑫上市+央行超2万亿逆回购再添动能。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 券商高β属性，市场回撤时波动放大、行情高度依赖大盘情绪；② 单一行业ETF，受证券板块政策与周期影响集中，缺乏跨行业对冲。</p>
+    <p style="font-size:13px"><b>决策：建议买入（分批）。</b> 交易建议：分 3-5 笔建仓，单基金仓位 ≤10%；目标 PE 分位回升至 20%-30%，止损参考净值回撤 8%-10% 或全市场成交跌破 1.2 万亿。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>首批主动ETF试点锁定18家管理人（易方达/华夏/南方/富国/华泰柏瑞/国泰等），行业产品创新提速</li>
+      <li>中金吸收合并东兴/信达1138.54亿7/14获证监会受理，H1净利预增78~90%；年内券商发债超1.35万亿</li>
+      <li>证监会座谈会稳市（规范量化、推动中长期资金入市），沪深交易所上调高频申报费率</li>
+      <li>7/27长鑫科技上市+465%、央行超2万亿逆回购+证监会稳市七方面，市场放量普涨</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金2 中概 ===== -->
+<div class="card">
+  <h3>② 513050 易方达中概互联网ETF <span class="badge b-buy">BUY 分批/定投</span></h3>
+  <div class="meta">QDII-ETF ｜ 规模364.49亿 ｜ PE 16.32（分位1.83%）｜ PB 2.12（分位1.56%）｜ ROE 12.95% ｜ 经理 余海燕/刘依姗 ｜ 综合分 <b>7.89</b></div>
+  <div class="grid2">
+    <div><canvas id="r2" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">9.0</td></tr>
+        <tr><td>行业前景</td><td class="num">7.5</td></tr>
+        <tr><td>经理能力</td><td class="num">7.5</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.0</td></tr>
+        <tr><td>风险收益比</td><td class="num">7.5</td></tr>
+        <tr><td>流动性</td><td class="num">9.0</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 分批/定投）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值处历史极端低位（PE/PB分位均&lt;2%），低估筛选通过、安全边际厚实；② 资金面与催化共振——南向7月累计净流入超616亿托底，长鑫上市重塑科技估值、小米汽车发布会+AI算力景气度提升中概平台情绪。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 持仓高度集中于头部互联网平台，行业政策与单平台经营风险直接放大净值波动；② 外围不确定性——美伊冲突、油价及中美关系扰动QDII净值，汇率波动亦影响收益。</p>
+    <p style="font-size:13px"><b>决策：建议买入（分批/定投）。</b> 交易建议：定投平滑、严格勿追高，单基金仓位 ≤10%；目标估值分位修复至 20%-30%，跌破前低止损。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>7/21恒科+1.83%科技反弹（智谱+25%/华虹+16%/中芯+8%），7/18中概金龙-1.82%短线波动</li>
+      <li>南向7月累计净流入超616亿，持续为港股中概托底</li>
+      <li>美伊暂停互袭致油价跌破90、美股盘前走强利好中概修复</li>
+      <li>7/27长鑫科创板上市首日+465%、阿里/小米/美团为战略股东；7/30小米汽车发布会、二季度公募盈利1.94万亿、央行超2万亿逆回购形成支撑</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金3 白酒 ===== -->
+<div class="card">
+  <h3>③ 161725 招商中证白酒指数A <span class="badge b-buy">BUY 左侧分批</span></h3>
+  <div class="meta">指数LOF ｜ 规模206.9亿 ｜ PE 18.15（分位5.89%）｜ PB 3.69（分位0.28%）｜ 股息率4.65% ｜ ROE 20.87% ｜ 经理 侯昊 ｜ 综合分 <b>7.82</b></div>
+  <div class="grid2">
+    <div><canvas id="r3" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">9.0</td></tr>
+        <tr><td>行业前景</td><td class="num">6.5</td></tr>
+        <tr><td>经理能力</td><td class="num">8.0</td></tr>
+        <tr><td>持仓结构</td><td class="num">8.5</td></tr>
+        <tr><td>风险收益比</td><td class="num">7.0</td></tr>
+        <tr><td>流动性</td><td class="num">9.0</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 左侧分批）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值处历史极低位（PE/PB分位均&lt;6%），高股息高ROE提供显著安全边际，长线配置价值突出；② 龙头集中持仓质地优良，茅台提价与消费政策规划构成中期催化。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 消费基本面疲软（社零商品端仅+1.3%），需求复苏不及预期将压制估值修复节奏；② 行业单一、集中度高，且7/27市场主线在成长/科技，白酒短期非风口、存在阶段性跑输风险。</p>
+    <p style="font-size:13px"><b>决策：建议买入（左侧分批）。</b> 交易建议：以时间换空间、分批布局、严格勿追高单笔重仓；短期需容忍非主线波动。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>茅台7/18起年内二次提价（零售1539→1639、合同1269→1369，加权超10%历史首次），花旗维持买入目标1788.65并上调中国股票至超配</li>
+      <li>7/20白酒集体大涨（古井贡涨停/泸州+6.32%/汾酒+5.72%/茅台+4.79%），7/21冲高回落（茅台-1.94%）</li>
+      <li>上半年社零商品端仅+1.3%，《扩大消费十五五规划》提供政策底盘</li>
+      <li>7/27 A股普涨但主线为电力设备/电子/医药，红利让位，白酒未领涨</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金4 银行 ===== -->
+<div class="card">
+  <h3>④ 512800 华宝中证银行ETF <span class="badge b-buy">BUY 长期配置</span></h3>
+  <div class="meta">股票型ETF ｜ 规模106亿 ｜ PE 6.65（绝对低）｜ PB 0.63（破净）｜ 股息率5.13% ｜ ROE 9.53% ｜ 经理 丰晨成 ｜ 综合分 <b>7.68</b></div>
+  <div class="grid2">
+    <div><canvas id="r4" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">9.0</td></tr>
+        <tr><td>行业前景</td><td class="num">7.0</td></tr>
+        <tr><td>经理能力</td><td class="num">7.5</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.5</td></tr>
+        <tr><td>风险收益比</td><td class="num">7.0</td></tr>
+        <tr><td>流动性</td><td class="num">8.5</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 长期配置）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 绝对低估——PB破净0.63、股息率5.13%、PE处26%分位，安全边际突出；② 政策与资金面友好：央行超2万亿逆回购加码流动性、险资持续增配、分红高峰延续（六大行分红超4200亿）。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 7/27红利让位，成长股普涨下银行相对承压、短期弹性不足；② 持仓高度集中于银行系，行业单一，受利率下行与地产风险传导。</p>
+    <p style="font-size:13px"><b>决策：建议买入（长期配置）。</b> 交易建议：长期底仓、逢分红回调分批建仓，目标以破净修复＋年化5%股息为主；若中证银行PB跌破0.55或息差超预期恶化止损。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>央行二季度例会定调适度宽松，7/27超2万亿隔夜逆回购释放流动性</li>
+      <li>六大行2025年度合计分红超4200亿（同比增），分红比例近30%；险资持有银行约总股本4.9%</li>
+      <li>7/22国有大行+1.01%护盘；证监会座谈会+新一轮QDII额度预期</li>
+      <li>7/27银行/保险/煤炭等防御板块相对承压，红利今日让位</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金5 医疗 ===== -->
+<div class="card">
+  <h3>⑤ 512170 华宝中证医疗ETF <span class="badge b-buy">BUY 定投建仓·偏谨慎</span></h3>
+  <div class="meta">股票型ETF ｜ 规模264.51亿 ｜ PE 28.49（分位10.67%）｜ PB 3.13（分位2.40%）｜ ROE 11.26% ｜ 经理 张放（原胡洁 2026/2 离任）｜ 综合分 <b>7.59</b></div>
+  <div class="grid2">
+    <div><canvas id="r5" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">9.0</td></tr>
+        <tr><td>行业前景</td><td class="num">7.5</td></tr>
+        <tr><td>经理能力</td><td class="num">5.5</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.5</td></tr>
+        <tr><td>风险收益比</td><td class="num">7.0</td></tr>
+        <tr><td>流动性</td><td class="num">9.0</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 定投建仓·偏谨慎）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值极低——PE/PB分位均处历史底部，长期配置安全边际充足；② 行业景气回升——创新药出海爆发+政策底未破+7/27医药生物13股涨停确认边际改善。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 经理变更——胡洁离任后张放业绩为负（-10.93%），主动管理能力与跟踪稳定性待验；② 短期涨幅与波动——近3月医药已涨24%、7/17跌停潮提示高波动，追高需谨慎。</p>
+    <p style="font-size:13px"><b>决策：建议买入（定投建仓·偏谨慎，非追高）。</b> 交易建议：定投分批建仓，单基金仓位 ≤10%；若回踩前低或经理实绩未改善，设8%-10%止损并暂停加仓。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>6/9-7/16：162只医药基金平均+24%，64亿资金逆势流入，创新药估值处历史2.9%分位</li>
+      <li>上半年创新药对外授权81笔/约1100亿美元，达2025全年80%</li>
+      <li>7/17医药跌停潮；7/22创新药活跃（莱美药业20cm）；7/27医药生物13股涨停行业回暖</li>
+      <li>经理变更：胡洁2026/2离任，张放接任，任职期收益约-10.93%</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金6 消费红利 ===== -->
+<div class="card">
+  <h3>⑥ 008928 宏利消费红利指数A <span class="badge b-buy">BUY 定投</span></h3>
+  <div class="meta">指数型 ｜ 规模6.54亿 ｜ PE 17.49（分位11.45%）｜ PB 3.24（分位0.20%）｜ 股息率4.58% ｜ ROE 18.95% ｜ 经理 李婷婷 ｜ 综合分 <b>7.52</b></div>
+  <div class="grid2">
+    <div><canvas id="r6" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">9.0</td></tr>
+        <tr><td>行业前景</td><td class="num">7.0</td></tr>
+        <tr><td>经理能力</td><td class="num">7.0</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.5</td></tr>
+        <tr><td>风险收益比</td><td class="num">8.0</td></tr>
+        <tr><td>流动性</td><td class="num">5.0</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 定投）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值处于历史极低分位（PB分位0.20%），安全边际充足，股息率4.58%提供稳定现金回报；② 茅台提价与消费提振政策形成中线催化，食饮板块相对估值处二十年低位、修复弹性可期。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 7/27红利风格让位成长（电力设备/电子领涨），短期风格轮动或令净值落后，消费非当前主线；② 规模仅6.54亿流动性一般，且持仓集中于主要消费，需求疲软（社零+1.3%）下防御属性难抵风格与行业双杀。</p>
+    <p style="font-size:13px"><b>决策：建议买入（定投分批建仓）。</b> 交易建议：单只仓位 ≤10%，密切盯流动性与赎回风险，不宜大笔申赎；设净值回撤超15%的止损纪律。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>茅台7/18起年内二次提价（加权超10%），催化白酒/食饮中线走强；细分食品指数PE19.53近十年3.92%分位</li>
+      <li>国务院《扩大消费十五五规划》锚定社零60万亿，广发称食饮相对全A估值创二十年新低</li>
+      <li>白酒7/21冲高回落（茅台-1.94%），显示提价利好兑现后分歧加大</li>
+      <li>上半年社零商品端仅+1.3%，终端需求仍偏弱；规模6.54亿、流动性一般</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金7 养老 ===== -->
+<div class="card">
+  <h3>⑦ 168001 国寿安保中证养老产业指数增强 <span class="badge b-caut">BUY 仅小资金</span></h3>
+  <div class="meta">指数增强型 ｜ 规模1.27亿 ｜ PE 11.11（分位0.86%）｜ PB 1.71（分位1.40%）｜ ROE 15.58% ｜ 经理 自2018长期任职 ｜ 综合分 <b>7.28</b></div>
+  <div class="grid2">
+    <div><canvas id="r7" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">9.0</td></tr>
+        <tr><td>行业前景</td><td class="num">7.5</td></tr>
+        <tr><td>经理能力</td><td class="num">7.0</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.0</td></tr>
+        <tr><td>风险收益比</td><td class="num">7.5</td></tr>
+        <tr><td>流动性</td><td class="num">3.5</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 仅小资金）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值处历史极低分位（PE 0.86%），安全边际高，低估筛选通过；② 政策密集利好——养老消费入十五五规划、个人养老金扩容、医药消费双线回暖。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 规模1.27亿流动性弱，大额进出冲击成本高，仅适配小资金；② 指数增强存在跟踪偏离，经理超额收益未经验证；养老产业短期弹性有限。</p>
+    <p style="font-size:13px"><b>决策：建议买入（仅小资金参与）。</b> 交易建议：≤5%总资产定投摊薄，设止损并密切跟踪规模变化；一旦规模持续低于5000万警戒线或触发清盘条款须立即退出。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>《扩大消费十五五规划》单列"扩大养老消费"（三级养老服务网络/医养结合/银发经济）</li>
+      <li>茅台二次提价带动消费端预期改善</li>
+      <li>个人养老金基金数量扩容至321只</li>
+      <li>7/27医药生物13股涨停行业回暖；规模仅1.27亿流动性弱，仅适合小资金</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 基金8 恒科 ===== -->
+<div class="card">
+  <h3>⑧ 513180 华夏恒生科技ETF <span class="badge b-caut">BUY 定投·破线</span></h3>
+  <div class="meta">QDII-ETF ｜ 规模498亿 ｜ PE 23.06（分位35.34% 破线）｜ PB 2.62 ｜ ROE 11.20% ｜ 经理 徐猛 ｜ 综合分 <b>7.10</b></div>
+  <div class="grid2">
+    <div><canvas id="r8" height="260"></canvas></div>
+    <div>
+      <table class="mini"><tr><th>多Agent独立六维（隔离上下文）</th><th class="num">评分</th></tr>
+        <tr><td>估值水平</td><td class="num">6.0</td></tr>
+        <tr><td>行业前景</td><td class="num">7.5</td></tr>
+        <tr><td>经理能力</td><td class="num">7.5</td></tr>
+        <tr><td>持仓结构</td><td class="num">7.5</td></tr>
+        <tr><td>风险收益比</td><td class="num">6.5</td></tr>
+        <tr><td>流动性</td><td class="num">9.0</td></tr></table>
+    </div>
+  </div>
+  <div class="sec"><h4>独立Agent裁决（BUY 定投·破线）</h4>
+    <p style="font-size:13px"><span class="bull">支撑因素：</span>① 估值偏低（PE23.06/PB2.62分位中低）+科技景气上行（长鑫/AI算力/小米汽车）提供修复弹性；② 头部平台+半导体龙头分散持仓、498亿规模高流动性，下行有底、上行有锐。</p>
+    <p style="font-size:13px"><span class="bear">风险因素：</span>① 破线后非绝对低估，且美伊冲突/油价扰动、南向净卖出构成外部压制；② 近3月单日波动常超3%，追高回撤风险显著，须以定投而非一次性建仓应对。</p>
+    <p style="font-size:13px"><b>决策：谨慎买入·定投型（破线仅定投参与，方向偏多、不一次性重仓）。</b> 交易建议：周定投/网格方式分批低吸（每跌2%加仓一档），单基金仓位10%-15%；目标PE分位回升至50%+，跌破4400点或单笔浮亏超15%止损。</p>
+  </div>
+  <div class="sec"><h4>近3个月信息补充（新闻/行业/持仓变动/经理观点）</h4>
+    <ul>
+      <li>7/17-18恒科连跌-4.52%/-4.37%；7/21反弹+1.83%（智谱+25%/华虹+16%）；7/22重挫-3.04%、7/23修复+0.65%</li>
+      <li>南向资金净卖出，美伊冲突与油价扰动市场情绪</li>
+      <li>7/27长鑫科技上市首日+465%，战略股东含阿里/小米/美团，重构存储估值逻辑；恒科+1.57%回暖</li>
+      <li>小米汽车发布会定档7/30，PCB/AI算力爆发，二季度公募盈利1.94万亿；经理徐猛运作稳健、规模与流动性优势延续</li>
+    </ul>
+  </div>
+</div>
+
+<h2>三、买入建议汇总</h2>
+<table>
+  <thead><tr><th>基金</th><th>多Agent裁决</th><th>综合分</th><th>支撑因素（≥2）</th><th>风险因素（≥2）</th></tr></thead>
+  <tbody>
+    <tr><td class="name">券商 512880</td><td><span class="badge b-buy">建议买入</span></td><td>7.95</td><td>PE分位9.06%近十年极低；政策(稳市七方面)+资金(ETF净流入3567亿)+业绩(中报预增)三重催化</td><td>强周期高β；单一行业ETF；行情依赖大盘情绪</td></tr>
+    <tr><td class="name">中概 513050</td><td><span class="badge b-buy">建议买入</span></td><td>7.89</td><td>PE分位1.83%极端低估；南向616亿托底；长鑫/小米汽车/AI算力催化</td><td>持仓集中头部平台；美伊/油价/中美关系扰动QDII；汇率波动</td></tr>
+    <tr><td class="name">白酒 161725</td><td><span class="badge b-buy">建议买入</span></td><td>7.82</td><td>PE/PB分位均<6%极低；茅台二次提价拐点；ROE20.87%高股息</td><td>社零+1.3%需求弱；行业单一非当前主线；提价传导存疑</td></tr>
+    <tr><td class="name">银行 512800</td><td><span class="badge b-buy">建议买入</span></td><td>7.68</td><td>破净+5.13%股息绝对低估；央行2万亿逆回购；险资底仓+分红4200亿</td><td>红利让位弹性不足；行业单一；利率下行与地产风险</td></tr>
+    <tr><td class="name">医疗 512170</td><td><span class="badge b-buy">建议买入(偏谨慎)</span></td><td>7.59</td><td>估值分位极低；7/27医药13股涨停；创新药出海+政策底</td><td>经理变更；近3月涨24%高波动；7/17跌停潮余波</td></tr>
+    <tr><td class="name">消费红利 008928</td><td><span class="badge b-buy">建议买入</span></td><td>7.52</td><td>极低估值+高股息；消费十五五规划；茅台提价</td><td>规模6.54亿流动性弱；社零+1.3%；红利让位</td></tr>
+    <tr><td class="name">养老 168001</td><td><span class="badge b-caut">建议买入(仅小资金)</span></td><td>7.28</td><td>PE分位0.86%十年最低；养老政策+Y份额扩容；经理长期任职</td><td>规模1.27亿清盘风险；增强回撤；弹性有限</td></tr>
+    <tr><td class="name">恒科 513180</td><td><span class="badge b-caut">谨慎买入(破线定投)</span></td><td>7.10</td><td>徐猛稳健；龙头分散；498亿高流动性；长鑫/AI景气</td><td>PE分位破线；南向净卖出；近3月单日波动超3%</td></tr>
+  </tbody>
+</table>
+
+<div class="disclaimer">
+  <b>⚠️ 风险提示与免责声明：</b>本报告由 AI（TradingAgentTeam 多Agent架构）基于公开信息（天天基金网、雪球/蛋卷基金、平安证券指数信号灯、东方财富、同花顺iFinD、腾讯/新浪/网易财经、证券时报、每日经济新闻等）整理生成，数据采集前已清理本地 memory 缓存、规避历史数据干扰，行情均来自 7/27 当日 fresh 核验。
+  多Agent独立分析结论仅供参考，<b>不构成任何投资建议或个股/基金推荐</b>。基金有风险，投资需谨慎；PE/PB 分位为历史相对值，不代表未来收益；小规模基金（008928 6.54亿、168001 1.27亿）存在流动性与清盘风险；QDII 基金含汇率与境外市场风险。请结合自身风险承受能力独立决策。
+</div>
+
+<div class="foot">基金低估筛选与多Agent独立评估系统 · 2026-07-27 20:00（收盘后晚盘） · 数据来源：公开平台聚合（天天基金/雪球/平安证券指数信号灯/东方财富/同花顺iFinD/腾讯·新浪·网易财经/证券时报/每日经济新闻） ｜ 本页雷达图为各基金独立Agent六维量化评分（0–10）</div>
+</div>
+
+<script>
+const DIMS=["估值水平","行业前景","经理能力","持仓结构","风险收益比","流动性"];
+const data={
+  r1:[8.8,7.5,8.5,7.8,7.0,9.0],
+  r2:[9.0,7.5,7.5,7.0,7.5,9.0],
+  r3:[9.0,6.5,8.0,8.5,7.0,9.0],
+  r4:[9.0,7.0,7.5,7.5,7.0,8.5],
+  r5:[9.0,7.5,5.5,7.5,7.0,9.0],
+  r6:[9.0,7.0,7.0,7.5,8.0,5.0],
+  r7:[9.0,7.5,7.0,7.0,7.5,3.5],
+  r8:[6.0,7.5,7.5,7.5,6.5,9.0]
+};
+const colors=["#2563eb","#16a34a","#d97706","#7c3aed","#0891b2","#dc2626","#db2777","#65a30d"];
+Object.keys(data).forEach((k,i)=>{
+  const ctx=document.getElementById(k);
+  new Chart(ctx,{type:"radar",data:{labels:DIMS,datasets:[{label:"六维评分",data:data[k],
+    backgroundColor:"rgba(37,99,235,.15)",borderColor:colors[i],pointBackgroundColor:colors[i],borderWidth:2}]},
+    options:{scales:{r:{min:0,max:10,ticks:{stepSize:2,font:{size:10}},pointLabels:{font:{size:11}}}},plugins:{legend:{display:false}}}});
+});
+</script>
+</body>
+</html>
