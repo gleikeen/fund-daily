@@ -1,8 +1,23 @@
-# Fund Daily
+# 基金日报 · 低估基金筛选与评估
 
-基金日报静态归档。
+最新报告：[2026-07-28 盘后](fund-report-2026-07-28-盘后.html)
 
-- GitHub Pages: <https://gleikeen.github.io/fund-daily/>
-- 最新报告: <https://gleikeen.github.io/fund-daily/fund-report-2026-07-28-%E7%9B%98%E5%90%8E.html>（Multi-Agent 独立分析·盘后 · 10只PE分位<20%低估基金 · 银行ETF 8.08(建议买入)/中韩半导体ETF 7.47(建议买入)/食品饮料ETF华夏 7.35(建议买入)/医疗ETF 7.23(建议买入)/中概互联ETF 7.22(建议买入)/证券ETF 7.11(建议买入)/红利低波ETF 7.11(建议买入)/恒生医疗ETF 7.03(建议买入)/食品饮料ETF华宝 6.16(谨慎买入)/创业板新能源ETF 5.50(谨慎买入)）
+> 每日通过多Agent系统（海选50+ → Top 10）筛选PE分位<20%的低估基金，每只基金独立Agent使用 neodata-financial-search 进行全面分析。
+>
+> ⚠️ 所有内容仅供研究参考，不构成任何投资建议。
 
-站点通过 [GitHub Actions](.github/workflows/static.yml) 自动发布：推送到 `main` 后会重新部署。
+## 工作流说明
+
+- **Step 1**: 海选Agent搜索8+渠道，筛选50+只低估基金
+- **Step 1.5**: 采集A股/港股/美股行情及催化事件
+- **Step 2**: 动态构建Top 10基金池，二次校验YTD/溢价率/资金流向
+- **Step 3**: 每只基金独立Agent使用 neodata-financial-search 进行六维评分
+- **Step 4**: 生成HTML报告（含图表+详细分析）
+- **Step 5-6**: 更新首页 + Git提交推送
+
+## 规则
+
+- 🔴 零缓存、零硬编码，所有数据每日重新获取
+- 🔴 警惕"盈利暴增型低PE"估值陷阱（YTD>30%标记扣分）
+- 🔴 Step 3 使用 neodata-financial-search（禁止WebSearch）
+- 🔴 时段命名：盘前(7-9点)/盘中(9:30-15:00)/盘后(15:00-次日7:00)
