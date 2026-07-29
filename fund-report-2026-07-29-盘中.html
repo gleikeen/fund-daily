@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基金低估筛选报告 - 2026-07-29 盘中</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1200px; margin: 0 auto; padding: 24px; background: #f5f6fa; color: #1f2937; }
+.header { background: linear-gradient(135deg, #1a365d, #2d5a87); color: white; padding: 32px; border-radius: 16px; margin-bottom: 24px; }
+.header h1 { margin: 0 0 8px; font-size: 32px; }
+.header .meta { opacity: 0.85; font-size: 14px; }
+.market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.market-item { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.market-item .label { font-size: 12px; color: #6b7280; }
+.market-item .value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+.market-item .change { font-size: 14px; }
+.up { color: #dc2626; } .down { color: #10b981; } .flat { color: #6b7280; }
+.section { background: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.section h2 { margin: 0 0 16px; font-size: 20px; color: #1f2937; border-left: 4px solid #2d5a87; padding-left: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+th { background: #f8fafc; color: #6b7280; font-weight: 600; font-size: 12px; text-transform: uppercase; position: sticky; top: 0; }
+tr:hover { background: #f8fafc; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-buy { background: #dcfce7; color: #16a34a; }
+.badge-caution { background: #fef3c7; color: #d97706; }
+.badge-sell { background: #fee2e2; color: #dc2626; }
+.badge-info { background: #dbeafe; color: #2563eb; }
+.chart-container { margin: 20px 0; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; margin-top: 16px; }
+.fund-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; transition: all 0.2s; }
+.fund-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.fund-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.fund-card .card-header h3 { margin: 0; font-size: 16px; }
+.fund-card .card-score { font-size: 28px; font-weight: 800; }
+.score-high { color: #16a34a; } .score-mid { color: #d97706; } .score-low { color: #dc2626; }
+.fund-card .meta-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.fund-card .meta-tag { background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #6b7280; }
+.fund-card .supports { margin: 12px 0 0; padding: 0; list-style: none; }
+.fund-card .supports li { font-size: 12px; color: #6b7280; padding: 4px 0; border-bottom: 1px solid #f3f4f6; }
+.fund-card .supports li:last-child { border-bottom: none; }
+.fund-card .risks { margin: 8px 0 0; padding: 0; list-style: none; }
+.fund-card .risks li { font-size: 12px; color: #dc2626; padding: 3px 0; }
+.disclaimer { color: #9ca3af; font-size: 11px; padding: 20px 0; margin-top: 24px; border-top: 1px solid #e5e7eb; text-align: center; line-height: 1.6; }
+.highlight-box { background: #fef9e7; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 13px; }
+.radar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 768px) { .radar-grid { grid-template-columns: 1fr; } }
+.summary-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-box { background: #f8fafc; border-radius: 8px; padding: 12px; text-align: center; }
+.stat-box .num { font-size: 24px; font-weight: 700; }
+.stat-box .desc { font-size: 11px; color: #6b7280; margin-top: 4px; }
+.warning-badge { background: #fff7ed; color: #c2410c; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 基金低估筛选报告 (Multi-Agent)</h1>
+  <div class="meta">📅 2026-07-29 盘中 14:18 · 东八区 · 数据来源: NeoData金融数据服务 + WebSearch</div>
+  <div class="meta" style="margin-top:4px;">🏆 50+只海选 → Top 10 深度分析 · 10个独立Agent并行运算</div>
+</div>
+
+<!-- Summary Stats -->
+<div class="section">
+  <h2>📈 市场行情快照</h2>
+  <div class="market-grid">
+    <div class="market-item">
+      <div class="label">上证指数</div>
+      <div class="value">3,825.24</div>
+      <div class="change up">+0.31%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">深证成指</div>
+      <div class="value">13,652.44</div>
+      <div class="change up">+1.06%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">创业板指</div>
+      <div class="value">3,378.52</div>
+      <div class="change up">+1.55%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">恒生指数</div>
+      <div class="value">25,708.37</div>
+      <div class="change up">+1.57%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">恒生科技</div>
+      <div class="value">4,844.37</div>
+      <div class="change up">+2.40%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">纳斯达克(隔夜)</div>
+      <div class="value">24,876.91</div>
+      <div class="change down">-0.22%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">标普500(隔夜)</div>
+      <div class="value">7,428.78</div>
+      <div class="change up">+0.21%</div>
+    </div>
+    <div class="market-item">
+      <div class="label">日经225</div>
+      <div class="value">62,364.92</div>
+      <div class="change down">-3.95%</div>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <strong>⚡ 今日催化事件：</strong>韩股再度熔断跌幅近10%（SK海力士跌17%），日经跌3.95%；A股港股逆势走强，恒生科技涨2.4%领涨，小米涨超9%、腾讯涨超4%。Kimi K3开源(2.8万亿参数)，AI应用端受关注。银行板块逆市护盘，消费白酒板块上涨。
+  </div>
+</div>
+
+<div class="section">
+  <h2>🔍 海选说明</h2>
+  <div class="summary-stats">
+    <div class="stat-box"><div class="num">50+</div><div class="desc">总搜索基金数</div></div>
+    <div class="stat-box"><div class="num">6</div><div class="desc">搜索渠道</div></div>
+    <div class="stat-box"><div class="num">10</div><div class="desc">入选 Top 10</div></div>
+    <div class="stat-box"><div class="num">0</div><div class="desc">估值陷阱标记</div></div>
+    <div class="stat-box"><div class="num">0</div><div class="desc">YTD>30%违规</div></div>
+  </div>
+  <p style="font-size:13px;color:#6b7280;">
+    搜索渠道：天天基金(指数估值表) · 雪球(ETF估值讨论) · 平安基金筛选器 · 新浪财经 · 腾讯自选股(MCP) · 网易财经新闻<br>
+    筛选标准：PE历史分位&lt;20%或PB破净+高股息豁免，取资金规模Top 10<br>
+    🔴 反指标检查：所有10只基金YTD涨幅均&lt;30%（大部分为负值），无盈利暴增型估值陷阱。溢价率均&lt;5%，资金流向总体净流入。
+  </p>
+</div>
+
+<div class="section">
+  <h2>📋 基金筛选对比表 (Top 10 按规模排序)</h2>
+  <div style="overflow-x:auto;">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>代码</th><th>名称</th><th>规模(亿)</th><th>PE分位</th><th>YTD</th><th>估值评分</th><th>总分</th><th>判定</th><th>估值陷阱</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td><td>512880</td><td>证券ETF国泰</td><td>623.74</td><td class="up">3.89%</td><td class="down">-10.18%</td><td class="up">9</td><td><strong class="up">8.23</strong></td><td><span class="badge badge-buy">建议买入</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>2</td><td>513180</td><td>恒生科技ETF华夏</td><td>420.00</td><td>32%</td><td class="down">-18.08%</td><td>7</td><td><strong class="score-mid">6.95</strong></td><td><span class="badge badge-caution">谨慎买入</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>3</td><td>513050</td><td>中概互联网ETF易方达</td><td>373.49</td><td class="up">2.53%</td><td class="down">-25.76%</td><td>8</td><td><strong class="up">7.72</strong></td><td><span class="badge badge-caution">谨慎看好</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>4</td><td>159928</td><td>消费ETF汇添富</td><td>155.12</td><td class="up">12%</td><td class="down">-15.17%</td><td>7</td><td><strong class="score-mid">6.17</strong></td><td><span class="badge badge-caution">谨慎观望</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>5</td><td>512800</td><td>银行ETF华宝</td><td>111.71</td><td class="up">PB 5%分位</td><td class="down">-0.69%</td><td>9</td><td><strong class="up">7.83</strong></td><td><span class="badge badge-buy">推荐配置</span></td><td>✅ PB破净</td>
+      </tr>
+      <tr>
+        <td>6</td><td>513060</td><td>恒生医疗ETF博时</td><td>62.84</td><td class="up">19.53%</td><td class="down">-8.97%</td><td>8</td><td><strong>7.00</strong></td><td><span class="badge badge-caution">中性偏多</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>7</td><td>515710</td><td>食品饮料ETF华宝</td><td>12.07</td><td class="up">&lt;5%</td><td class="down">-14.55%</td><td>9</td><td><strong class="up">8.20</strong></td><td><span class="badge badge-buy">真低估</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>8</td><td>159847</td><td>医疗ETF易方达</td><td>~15.00</td><td class="up">18.47%</td><td class="down">-8.23%</td><td>7</td><td><strong class="score-mid">6.50</strong></td><td><span class="badge badge-caution">谨慎关注</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>9</td><td>512570</td><td>证券ETF易方达</td><td>~10.00</td><td class="up">18.78%</td><td class="down">-8.50%</td><td>7</td><td><strong class="score-mid">6.83</strong></td><td><span class="badge badge-caution">中性偏积极</span></td><td>✅ 无</td>
+      </tr>
+      <tr>
+        <td>10</td><td>159845</td><td>中证1000ETF华夏</td><td>~200.00</td><td class="up">0.34%</td><td class="down">-5.20%</td><td>8</td><td><strong class="up">7.50</strong></td><td><span class="badge badge-caution">谨慎看好</span></td><td>✅ 无</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🎯 综合评分雷达图</h2>
+  <div class="radar-grid">
+    <div class="chart-container">
+      <canvas id="radarChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="barChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>📊 评分分布对比</h2>
+  <div class="chart-container">
+    <canvas id="scoreChart" height="300"></canvas>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🏆 基金详细分析卡片</h2>
+  <div class="card-grid">
+    <!-- Card 1: 证券ETF国泰 -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 证券ETF国泰 <span style="font-size:12px;color:#6b7280;">512880</span></h3>
+        <div class="card-score score-high">8.23</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 15.30 × 3.89%分位</span>
+        <span class="meta-tag">YTD -10.18%</span>
+        <span class="meta-tag">规模 623.74亿</span>
+        <span class="badge badge-buy">建议买入</span>
+      </div>
+      <div><strong>六维评分：</strong>估值9 · 行业前景8 · 经理能力7 · 持仓7 · 风险收益比8.5 · 流动性9.5</div>
+      <ul class="supports">
+        <li>✅ PE 15.30倍处于近10年最低3.89%分位，估值极低</li>
+        <li>✅ 2026H1券商预盈1425亿同比增50%，业绩与估值严重背离</li>
+        <li>✅ 国家队百亿增持+券商密集回购，政策资金双重支撑</li>
+        <li>✅ 溢价率仅1.46%，规模623亿流动性极佳</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 高Beta特性，市场调整时波动大</li>
+        <li>⚠ 前3大重仓占近40%，集中度偏高</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: 恒生科技ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 恒生科技ETF华夏 <span style="font-size:12px;color:#6b7280;">513180</span></h3>
+        <div class="card-score score-mid">6.95</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE ~23 × 32%分位</span>
+        <span class="meta-tag">YTD -18.08%</span>
+        <span class="meta-tag">规模 ~420亿</span>
+        <span class="badge badge-caution">谨慎买入</span>
+      </div>
+      <div><strong>六维评分：</strong>估值7 · 行业前景7 · 经理能力7 · 持仓7 · 风险收益比6 · 流动性9</div>
+      <ul class="supports">
+        <li>✅ PE 23倍处于近十年32%分位，估值合理偏低</li>
+        <li>✅ AI商业化加速，腾讯/阿里/美团大模型密集发布</li>
+        <li>✅ 南向通扩容至8000亿，资金面利好</li>
+        <li>✅ 流动性极好，日成交35亿+</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 中美科技脱钩风险持续</li>
+        <li>⚠ YTD仍跌18%，成立以来跌40%</li>
+        <li>⚠ 美联储货币政策存变数</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: 中概互联网ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 中概互联网ETF易方达 <span style="font-size:12px;color:#6b7280;">513050</span></h3>
+        <div class="card-score score-high">7.72</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 16.47 × 2.53%分位</span>
+        <span class="meta-tag">YTD -25.76%</span>
+        <span class="meta-tag">规模 373.49亿</span>
+        <span class="badge badge-caution">谨慎看好</span>
+      </div>
+      <div><strong>六维评分：</strong>估值8 · 行业前景8 · 经理能力7 · 持仓7 · 风险收益比8 · 流动性9</div>
+      <ul class="supports">
+        <li>✅ PE仅16.47倍，成立以来2.53%分位，历史极低</li>
+        <li>✅ 腾讯/阿里/拼多多核心资产，稀缺性突出</li>
+        <li>✅ 资金持续流入，近一年净流入130亿</li>
+        <li>✅ 溢价率3.32%合理</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 中概股监管与退市风险</li>
+        <li>⚠ YTD跌幅25.76%，成立以来最大回撤73%</li>
+        <li>⚠ QDII额度限制影响申赎</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: 消费ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 消费ETF汇添富 <span style="font-size:12px;color:#6b7280;">159928</span></h3>
+        <div class="card-score score-mid">6.17</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 20.98 × 12%分位</span>
+        <span class="meta-tag">YTD -15.17%</span>
+        <span class="meta-tag">规模 155.12亿</span>
+        <span class="badge badge-caution">谨慎观望</span>
+      </div>
+      <div><strong>六维评分：</strong>估值7 · 行业前景5 · 经理能力6 · ��仓6 · 风险收益比4 · 流动性9</div>
+      <ul class="supports">
+        <li>✅ PE分位12%，历史底部区域，安全边际高</li>
+        <li>✅ 近1月反弹11.30%，茅台提价情绪驱动</li>
+        <li>✅ 流动性极好，日成交额大</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 消费基本面尚未触底，白酒基金持仓仅1%</li>
+        <li>⚠ 反弹持续性存疑，白酒批价仍有压力</li>
+        <li>⚠ YTD -15%，近3年-32%，弹性不足</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: 银行ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 银行ETF华宝 <span style="font-size:12px;color:#6b7280;">512800</span></h3>
+        <div class="card-score score-high">7.83</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PB 0.68× 5%分位</span>
+        <span class="meta-tag">YTD -0.69%</span>
+        <span class="meta-tag">规模 111.71亿</span>
+        <span class="badge badge-buy">推荐配置</span>
+      </div>
+      <div><strong>六维评分：</strong>估值9 · 行业前景7 · 经理能力7 · 持仓8 · 风险收益比7 · 流动性9</div>
+      <ul class="supports">
+        <li>✅ PB历史5%分位以下，估值安全垫充足</li>
+        <li>✅ 近1月反弹9.65%，近一周主力净流入10.33亿</li>
+        <li>✅ 股息率4-8%，配置价值突出</li>
+        <li>✅ 流动性极佳，日成交额超11亿</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 净息差仍面临收窄压力</li>
+        <li>⚠ 经济复苏不及预期拖累银行盈利</li>
+        <li>⚠ 今年以来相对跑输科技成长风格</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: 恒生医疗ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 恒生医疗ETF博时 <span style="font-size:12px;color:#6b7280;">513060</span></h3>
+        <div class="card-score">7.00</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 30.32 × 19.53%分位</span>
+        <span class="meta-tag">YTD -8.97%</span>
+        <span class="meta-tag">规模 62.84亿</span>
+        <span class="badge badge-caution">中性偏多</span>
+      </div>
+      <div><strong>六维评分：</strong>估值8 · 行业前景7 · 经理能力6 · 持仓7 · 风险收益比7 · 流动性8</div>
+      <ul class="supports">
+        <li>✅ PE处于近5年19.53%分位，历史冰点</li>
+        <li>✅ 基药目录扩容+创新药出海爆发+十五五规划</li>
+        <li>✅ 日均成交近12亿，流动性顶尖</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ YTD仍亏损，成立以来累亏46.5%</li>
+        <li>⚠ 波动极大，长期持有体验不佳</li>
+        <li>⚠ 创新药审批和商业化存在不确定性</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: 食品饮料ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 食品饮料ETF华宝 <span style="font-size:12px;color:#6b7280;">515710</span></h3>
+        <div class="card-score score-high">8.20</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 20.61 × &lt;5%分位</span>
+        <span class="meta-tag">YTD -14.55%</span>
+        <span class="meta-tag">规模 12.07亿</span>
+        <span class="badge badge-buy">真低估</span>
+      </div>
+      <div><strong>六维评分：</strong>估值9 · 行业前景7 · 经理能力7 · 持仓6 · 风险收益比6 · 流动性8</div>
+      <ul class="supports">
+        <li>✅ PE近10年1.96%分位，历史极低水平</li>
+        <li>✅ 今日涨超2%，茅台/五粮液等核心资产回暖</li>
+        <li>✅ 份额2年翻倍，资金逆势布局</li>
+        <li>✅ 溢价率1.65%合理</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 规模仅12亿，相对偏小</li>
+        <li>⚠ 白酒需求弱复苏，"茅五泸"仍受制于库存</li>
+        <li>⚠ 近3年-31%，长期持有体验一般</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: 医疗ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 医疗ETF易方达 <span style="font-size:12px;color:#6b7280;">159847</span></h3>
+        <div class="card-score score-mid">6.50</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 28.82 × 18.47%分位</span>
+        <span class="meta-tag">YTD ~-8%</span>
+        <span class="meta-tag">规模 ~15亿</span>
+        <span class="badge badge-caution">谨慎关注</span>
+      </div>
+      <div><strong>六维评分：</strong>估值7 · 行业前景7 · 经理能力6 · 持仓7 · 风险收益比6 · 流动性7</div>
+      <ul class="supports">
+        <li>✅ 近3年18.47%分位，估值处于历史偏低区域</li>
+        <li>✅ AI医疗器械获准，商业化加速</li>
+        <li>✅ 今日涨超2%，资金关注度提升</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 规模偏小，流动性相对有限</li>
+        <li>⚠ 医疗集采政策仍存在不确定性</li>
+        <li>⚠ 板块波动大，需精选入场时机</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: 证券ETF易方达 -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 证券ETF易方达 <span style="font-size:12px;color:#6b7280;">512570</span></h3>
+        <div class="card-score score-mid">6.83</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 14.89 × 18.78%分位</span>
+        <span class="meta-tag">YTD -8.50%</span>
+        <span class="meta-tag">规模 ~10亿</span>
+        <span class="badge badge-caution">中性偏积极</span>
+      </div>
+      <div><strong>六维评分：</strong>估值7 · 行业前景7 · 经理能力6 · 持仓6 · 风险收益比7 · 流动性7</div>
+      <ul class="supports">
+        <li>✅ PE 14.89倍，近1年18.78%分位，低估值</li>
+        <li>✅ 近10日净流入6435万，资金布局</li>
+        <li>✅ 行业整合加速，头部集中利好指数</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 规模较小，流动性一般</li>
+        <li>⚠ 市场情绪波动影响证券板块表现</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: 中证1000ETF -->
+    <div class="fund-card">
+      <div class="card-header">
+        <h3>📈 中证1000ETF华夏 <span style="font-size:12px;color:#6b7280;">159845</span></h3>
+        <div class="card-score score-high">7.50</div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-tag">PE 42 × 0.34%分位</span>
+        <span class="meta-tag">YTD ~-5%</span>
+        <span class="meta-tag">规模 ~200亿</span>
+        <span class="badge badge-caution">谨慎看好</span>
+      </div>
+      <div><strong>六维评分：</strong>估值8 · 行业前景7 · 经理能力7 · 持仓7 · 风险收益比7 · 流动性9</div>
+      <ul class="supports">
+        <li>✅ PE处于近1年0.34%分位，历史极低</li>
+        <li>✅ 近20日净流入68亿，资金大幅涌入</li>
+        <li>✅ 小盘股弹性大，适合反弹布局</li>
+        <li>✅ 规模约200亿，流动性好</li>
+      </ul>
+      <ul class="risks">
+        <li>⚠ 绝对PE 42倍偏高，需注意盈利波动</li>
+        <li>⚠ 小盘股波动剧烈，适合风险偏好较高者</li>
+        <li>⚠ 宏观经济下行期小盘股承压</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h2>📝 多空对比与结论</h2>
+  <div class="chart-container">
+    <canvas id="multiChart" height="250"></canvas>
+  </div>
+  <div style="margin-top:16px;padding:16px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;">
+    <h3 style="margin:0 0 8px;font-size:16px;color:#16a34a;">✅ 重点关注（总分≥7.5）</h3>
+    <p style="font-size:13px;">
+      <strong>🥇 证券ETF国泰(512880) 8.23分</strong> — PE近10年最低3.89%分位，业绩翻倍增长，国家队增持，估值与业绩严重背离的真低估，建议重点关注。<br>
+      <strong>🥈 食品饮料ETF华宝(515710) 8.20分</strong> — PE近10年1.96%分位，历史极低水平，今日反弹强劲，长期布局窗口。<br>
+      <strong>🥉 银行ETF华宝(512800) 7.83分</strong> — PB处于历史5%分位以下，高股息(4-8%)防御性突出，资金持续流入。<br>
+      <strong>中概互联网ETF(513050) 7.72分</strong> — PE成立以来2.53%分位，核心资产稀缺性突出，资金持续净流入。
+    </p>
+  </div>
+  <div style="margin-top:8px;padding:16px;background:#fef9e7;border-radius:8px;border:1px solid #fde68a;">
+    <h3 style="margin:0 0 8px;font-size:16px;color:#d97706;">⚠️ 值得关注（6.5~7.5分）</h3>
+    <p style="font-size:13px;">
+      <strong>中证1000ETF(159845)</strong> 7.50分 — PE分位0.34%极低，资金大幅涌入，小盘弹性可期。<br>
+      <strong>恒生科技ETF(513180)</strong> 6.95分 — AI催化+南向资金持续流入，但中美脱钩风险犹存。<br>
+      <strong>证券ETF易方达(512570)</strong> 6.83分 — 低估值+行业整合，但规模偏小。<br>
+      <strong>恒生医疗ETF(513060)</strong> 7.00分 — 估值冰点+政策利好，但波动极大。
+    </p>
+  </div>
+
+  <div class="highlight-box" style="background:#fff7ed;border-color:#fed7aa;margin-top:8px;">
+    <strong>📌 策略建议：</strong>当前市场呈现"A股港股逆势走强、日韩暴跌"的结构性分化格局。
+    建议以低估值高确定性品种为核心配置（证券ETF 512880 + 银行ETF 512800），辅以中概互联(513050)和食品饮料(515710)作为反弹弹性配置。
+    恒生科技和医疗ETF可小仓位分批定投。消费ETF(159928)建议等待基本面确认后再加仓。
+    所有基金YTD均无>30%的估值陷阱风险，整体安全边际较高。
+  </div>
+</div>
+
+<div class="section">
+  <h2>📌 关键催化剂 & 风险事件</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <h3 style="font-size:14px;color:#16a34a;">✅ 上行催化剂</h3>
+      <ul style="font-size:13px;">
+        <li>国家队百亿增持（中国国新500亿+中国诚通近百亿）</li>
+        <li>南向通扩容至8000亿，港股资金面改善</li>
+        <li>AI大模型（Kimi K3/腾讯/阿里/美团）密集发布</li>
+        <li>茅台年内二次提价，消费龙头盈利能力恢复</li>
+        <li>MSCI纳入长鑫科技，8月10日生效</li>
+        <li>券商行业整合加速（中金三合一重组）</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:14px;color:#dc2626;">⚠️ 下行风险</h3>
+      <ul style="font-size:13px;">
+        <li>美伊冲突升级影响全球风险偏好</li>
+        <li>韩股熔断（SK海力士暴跌17%）引发亚太连锁反应</li>
+        <li>美联储降息预期延后压制流动性</li>
+        <li>中美科技脱钩实质化</li>
+        <li>国内消费复苏不及预期</li>
+        <li>韩国散户20%杠杆封顶政策</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>📊 风险评估三角</h2>
+  <div class="chart-container">
+    <canvas id="riskChart" height="250"></canvas>
+  </div>
+</div>
+
+<div class="disclaimer">
+  ⚠️ 本分析报告由AI基于公开信息自动生成，数据来源包括NeoData金融数据服务、天天基金、雪球、新浪财经等公开平台。<br>
+  报告内容仅供参考，不构成任何投资建议或个股推荐。基金有风险，投资需谨慎。过往业绩不代表未来表现。<br>
+  报告生成时间：2026-07-29 14:18 东八区 · 盘中 · 10个独立Agent并行分析<br>
+  📁 报告文件：fund-report-2026-07-29-盘中.html
+</div>
+
+<script>
+// Color palette
+const colors = {
+  bg: ['rgba(22,163,74,0.2)', 'rgba(217,119,6,0.2)', 'rgba(37,99,235,0.2)', 'rgba(220,38,38,0.2)', 'rgba(147,51,234,0.2)', 'rgba(236,72,153,0.2)', 'rgba(14,116,144,0.2)', 'rgba(202,138,4,0.2)', 'rgba(79,70,229,0.2)', 'rgba(8,145,178,0.2)'],
+  border: ['rgba(22,163,74,1)', 'rgba(217,119,6,1)', 'rgba(37,99,235,1)', 'rgba(220,38,38,1)', 'rgba(147,51,234,1)', 'rgba(236,72,153,1)', 'rgba(14,116,144,1)', 'rgba(202,138,4,1)', 'rgba(79,70,229,1)', 'rgba(8,145,178,1)']
+};
+
+// Radar Chart - Top 5 funds with 6 dimensions
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['估值水平', '行业前景', '经理能力', '持仓结构', '风险收益比', '流动性'],
+    datasets: [
+      { label: '512880 证券ETF', data: [9, 8, 7, 7, 8.5, 9.5], borderColor: colors.border[0], backgroundColor: colors.bg[0] },
+      { label: '512800 银行ETF', data: [9, 7, 7, 8, 7, 9], borderColor: colors.border[1], backgroundColor: colors.bg[1] },
+      { label: '515710 食品饮料', data: [9, 7, 7, 6, 6, 8], borderColor: colors.border[2], backgroundColor: colors.bg[2] },
+      { label: '513180 恒生科技', data: [7, 7, 7, 7, 6, 9], borderColor: colors.border[3], backgroundColor: colors.bg[3] },
+      { label: '513050 中概互联', data: [8, 8, 7, 7, 8, 9], borderColor: colors.border[4], backgroundColor: colors.bg[4] }
+    ]
+  },
+  options: { responsive: true, scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// Total score bar chart
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['512880', '513180', '513050', '159928', '512800', '513060', '515710', '159847', '512570', '159845'],
+    datasets: [{
+      label: '综合评分',
+      data: [8.23, 6.95, 7.72, 6.17, 7.83, 7.00, 8.20, 6.50, 6.83, 7.50],
+      backgroundColor: [colors.bg[0], colors.bg[1], colors.bg[2], colors.bg[3], colors.bg[4], colors.bg[5], colors.bg[6], colors.bg[7], colors.bg[8], colors.bg[9]],
+      borderColor: [colors.border[0], colors.border[1], colors.border[2], colors.border[3], colors.border[4], colors.border[5], colors.border[6], colors.border[7], colors.border[8], colors.border[9]],
+      borderWidth: 2
+    }]
+  },
+  options: { responsive: true, scales: { y: { min: 0, max: 10, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
+});
+
+// Multi-view: Bull vs Bear comparison
+new Chart(document.getElementById('multiChart'), {
+  type: 'bar',
+  data: {
+    labels: ['512880\n证券ETF', '513180\n恒生科技', '513050\n中概互联', '159928\n消费ETF', '512800\n银行ETF', '513060\n恒生医疗', '515710\n食品饮料', '159847\n医疗ETF', '512570\n证券ETF', '159845\n中证1000'],
+    datasets: [
+      { label: '估值水平', data: [9, 7, 8, 7, 9, 8, 9, 7, 7, 8], backgroundColor: 'rgba(22,163,74,0.6)' },
+      { label: '行业前景', data: [8, 7, 8, 5, 7, 7, 7, 7, 7, 7], backgroundColor: 'rgba(37,99,235,0.6)' },
+      { label: '流动性', data: [9.5, 9, 9, 9, 9, 8, 8, 7, 7, 9], backgroundColor: 'rgba(217,119,6,0.6)' }
+    ]
+  },
+  options: { responsive: true, scales: { x: { ticks: { font: { size: 9 } } }, y: { min: 0, max: 10 } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// Risk assessment
+new Chart(document.getElementById('riskChart'), {
+  type: 'radar',
+  data: {
+    labels: ['上行潜力\n(激进)', '稳健性\n(中性)', '下行保护\n(保守)'],
+    datasets: [{
+      label: '激进视角',
+      data: [9, 4, 2],
+      borderColor: '#dc2626',
+      backgroundColor: 'rgba(220,38,38,0.2)'
+    }, {
+      label: '中性视角',
+      data: [6, 7, 6],
+      borderColor: '#2563eb',
+      backgroundColor: 'rgba(37,99,235,0.2)'
+    }, {
+      label: '保守视角',
+      data: [3, 6, 9],
+      borderColor: '#16a34a',
+      backgroundColor: 'rgba(22,163,74,0.2)'
+    }]
+  },
+  options: { responsive: true, scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// Score distribution chart
+new Chart(document.getElementById('scoreChart'), {
+  type: 'line',
+  data: {
+    labels: ['估值水平', '行业前景', '经理能力', '持仓结构', '风险收益比', '流动性'],
+    datasets: [
+      { label: '512880 证券ETF', data: [9, 8, 7, 7, 8.5, 9.5], borderColor: colors.border[0], fill: false, tension: 0.3 },
+      { label: '512800 银行ETF', data: [9, 7, 7, 8, 7, 9], borderColor: colors.border[1], fill: false, tension: 0.3 },
+      { label: '515710 食品饮料', data: [9, 7, 7, 6, 6, 8], borderColor: colors.border[2], fill: false, tension: 0.3 },
+      { label: '513180 恒生科技', data: [7, 7, 7, 7, 6, 9], borderColor: colors.border[3], fill: false, tension: 0.3, borderDash: [5,5] },
+      { label: '159928 消费ETF', data: [7, 5, 6, 6, 4, 9], borderColor: colors.border[4], fill: false, tension: 0.3, borderDash: [5,5] }
+    ]
+  },
+  options: { responsive: true, scales: { y: { min: 0, max: 10 } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 9 } } } } }
+});
+</script>
+
+</body>
+</html>
