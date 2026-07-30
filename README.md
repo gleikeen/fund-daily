@@ -1,6 +1,6 @@
 # 基金日报 · 低估基金筛选与评估
 
-最新报告：[2026-07-29 盘中](fund-report-2026-07-29-盘中.html)（上一期：[盘前](fund-report-2026-07-29-盘前.html)）
+最新报告：[2026-07-30 盘前](fund-report-2026-07-30-盘前.html)（上一期：[盘中](fund-report-2026-07-29-盘中.html)）
 
 > 每日通过多Agent系统（海选50+ → Top 10）筛选PE分位<20%的低估基金，每只基金独立Agent使用 neodata-financial-search 进行全面分析。
 >
