@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>基金低估筛选报告 - 2026-07-30 盘后</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1200px; margin: 0 auto; padding: 24px; background: #f0f2f5; color: #1f2937; }
+.header { background: linear-gradient(135deg, #1a365d, #2563eb); color: white; padding: 32px 40px; border-radius: 16px; margin-bottom: 24px; }
+.header h1 { font-size: 32px; margin: 0; }
+.header .subtitle { font-size: 14px; opacity: 0.8; margin-top: 8px; }
+.header .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 13px; margin-top: 12px; }
+.market-card { background: linear-gradient(135deg, #1e3a5f, #2d4a7a); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; }
+.market-card h2 { font-size: 18px; margin-bottom: 12px; }
+.market-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.market-item { background: rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 8px; }
+.market-item .region { font-size: 12px; opacity: 0.7; }
+.market-item .value { font-size: 20px; font-weight: 700; margin: 4px 0; }
+.market-item .change { font-size: 13px; }
+.positive { color: #4ade80 !important; }
+.negative { color: #f87171 !important; }
+.event-bar { background: rgba(255,255,255,0.08); padding: 12px 16px; border-radius: 8px; margin-top: 12px; font-size: 13px; line-height: 1.6; }
+.chart-card { background: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.chart-card h2 { font-size: 18px; margin-bottom: 16px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: #f8fafc; padding: 10px 12px; text-align: left; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+tr:hover { background: #f8fafc; }
+.rank-1 { background: #fef3c7; }
+.score-bar { height: 6px; border-radius: 3px; background: #e2e8f0; overflow: hidden; }
+.score-bar-inner { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.verdict-buy { color: #059669; font-weight: 600; }
+.verdict-hold { color: #d97706; font-weight: 600; }
+.verdict-watch { color: #6b7280; font-weight: 600; }
+.trap-warn { color: #dc2626; font-size: 12px; }
+.fund-card { background: white; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+.fund-card-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.fund-card-header .left h3 { font-size: 16px; }
+.fund-card-header .left .code { font-size: 13px; color: #6b7280; }
+.fund-card-header .score { font-size: 24px; font-weight: 700; }
+.fund-card-body { padding: 0 20px 16px; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
+.detail-item { background: #f8fafc; padding: 10px 12px; border-radius: 8px; }
+.detail-item label { font-size: 11px; color: #6b7280; }
+.detail-item .val { font-size: 14px; font-weight: 600; }
+canvas { max-width: 100%; }
+.disclaimer { color: #6b7280; font-size: 13px; padding: 20px; border-top: 1px solid #e5e7eb; margin-top: 24px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 基金低估筛选报告</h1>
+  <div class="subtitle">2026-07-30 盘后 17:00 · 东八区 · 数据来源: NeoData Financial Search</div>
+  <div class="badge">Multi-Agent · 50+海选Top10 · 10只并行分析</div>
+</div>
+
+<div class="market-card">
+  <h2>📈 市场行情快照</h2>
+  <div class="market-grid">
+    <div class="market-item">
+      <div class="region">🇨🇳 A股（7/30收盘）</div>
+      <div class="value">沪指 3,804.69</div>
+      <div class="change negative">▼ -0.62%</div>
+      <div style="margin-top:6px;font-size:13px;">深成指 13,285.80 <span class="negative">▼ -2.73%</span></div>
+      <div style="font-size:13px;">创业板 3,244.62 <span class="negative">▼ -3.97%</span></div>
+    </div>
+    <div class="market-item">
+      <div class="region">🇭🇰 港股（7/30收盘）</div>
+      <div class="value">恒生 25,858.88</div>
+      <div class="change positive">▲ +0.20%</div>
+      <div style="margin-top:6px;font-size:13px;">恒生科技 4,803.77 <span class="negative">▼ -1.25%</span></div>
+    </div>
+    <div class="market-item">
+      <div class="region">🇺🇸 美股（7/29收盘）</div>
+      <div class="value">道指 51,594.14</div>
+      <div class="change negative">▼ -2.19%</div>
+      <div style="margin-top:6px;font-size:13px;">标普 7,316.15 <span class="negative">▼ -1.52%</span></div>
+      <div style="font-size:13px;">纳指 24,442.94 <span class="negative">▼ -1.74%</span></div>
+    </div>
+  </div>
+  <div class="event-bar">
+    <strong>今日催化事件：</strong>消费复苏政策预期升温；白酒银行板块走强；美联储年内第5次维持利率不变(3票反对加息)；中东地缘冲突推高油价；A股回购潮持续升温(7月超500亿)
+  </div>
+</div>
+
+<div class="chart-card">
+  <h2>🏆 综合评分排行榜</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>排名</th><th>基金</th><th>代码</th><th>PE</th><th>PE分位</th><th>规模(亿)</th><th>YTD</th><th>溢价率</th><th>总分</th><th>建议</th></tr>
+      </thead>
+      <tbody><tr class="rank-1">
+        <td>1</td>
+        <td><strong>恒生医疗ETF博时</strong></td>
+        <td style="font-family:monospace">513060</td>
+        <td>29.52</td>
+        <td>16.48%分位</td>
+        <td>58.51</td>
+        <td class="negative">-7.86%</td>
+        <td class="">-2.86%</td>
+        <td style="font-weight:700;color:#059669">7.8</td>
+        <td class="verdict-buy">买入持有</td>
+      </tr><tr class="">
+        <td>2</td>
+        <td><strong>中概互联网ETF易方达</strong></td>
+        <td style="font-family:monospace">513050</td>
+        <td>16.44</td>
+        <td>10.57%分位</td>
+        <td>375.92</td>
+        <td class="negative">-24.94%</td>
+        <td class="">-0.23%</td>
+        <td style="font-weight:700;color:#059669">7.5</td>
+        <td class="verdict-buy">谨慎买入</td>
+      </tr><tr class="">
+        <td>3</td>
+        <td><strong>证券ETF国泰</strong></td>
+        <td style="font-family:monospace">512880</td>
+        <td>15.2</td>
+        <td>3.52%分位</td>
+        <td>630.39</td>
+        <td class="negative">-8.68%</td>
+        <td class="">-0.12%</td>
+        <td style="font-weight:700;color:#059669">7.38</td>
+        <td class="verdict-buy">谨慎买入</td>
+      </tr><tr class="">
+        <td>4</td>
+        <td><strong>消费ETF汇添富</strong></td>
+        <td style="font-family:monospace">159928</td>
+        <td>20.58</td>
+        <td>12.62%分位</td>
+        <td>155.12</td>
+        <td class="negative">-5.20%</td>
+        <td class="">0.10%</td>
+        <td style="font-weight:700;color:#059669">7.2</td>
+        <td class="verdict-buy">谨慎买入</td>
+      </tr><tr class="">
+        <td>5</td>
+        <td><strong>恒生互联网ETF华夏</strong></td>
+        <td style="font-family:monospace">513330</td>
+        <td>21.73</td>
+        <td>16.67%分位</td>
+        <td>282.43</td>
+        <td class="negative">-22.02%</td>
+        <td class="">-0.42%</td>
+        <td style="font-weight:700;color:#d97706">6.8</td>
+        <td class="verdict-hold">中性偏多</td>
+      </tr><tr class="">
+        <td>6</td>
+        <td><strong>证券ETF华夏</strong></td>
+        <td style="font-family:monospace">515010</td>
+        <td>14.83</td>
+        <td>5.28%分位</td>
+        <td>27.44</td>
+        <td class="negative">-6.50%</td>
+        <td class="">-0.05%</td>
+        <td style="font-weight:700;color:#d97706">6.8</td>
+        <td class="verdict-hold">中性偏多</td>
+      </tr><tr class="">
+        <td>7</td>
+        <td><strong>上证180ETF平安</strong><div class="trap-warn">⚠️ 规模偏小仅3500万</div></td>
+        <td style="font-family:monospace">530280</td>
+        <td>11.77</td>
+        <td>10.57%分位</td>
+        <td>5.00</td>
+        <td class="negative">-1.73%</td>
+        <td class="">-0.11%</td>
+        <td style="font-weight:700;color:#d97706">6.8</td>
+        <td class="verdict-watch">谨慎关注</td>
+      </tr><tr class="">
+        <td>8</td>
+        <td><strong>新能源ETF华夏</strong><div class="trap-warn">⚠️ 规模仅1.32亿偏小</div></td>
+        <td style="font-family:monospace">516850</td>
+        <td>34.68</td>
+        <td>0.83%分位</td>
+        <td>1.32</td>
+        <td class="negative">-14.45%</td>
+        <td class="">-0.90%</td>
+        <td style="font-weight:700;color:#d97706">6.5</td>
+        <td class="verdict-watch">谨慎关注</td>
+      </tr><tr class="">
+        <td>9</td>
+        <td><strong>旅游ETF富国</strong><div class="trap-warn">⚠️ 盈利压缩型低PE(PE67.81/分位0.56%)</div></td>
+        <td style="font-family:monospace">159766</td>
+        <td>67.81</td>
+        <td>0.56%分位</td>
+        <td>29.32</td>
+        <td class="negative">-29.73%</td>
+        <td class="">0.10%</td>
+        <td style="font-weight:700;color:#d97706">6.3</td>
+        <td class="verdict-watch">谨慎关注</td>
+      </tr><tr class="">
+        <td>10</td>
+        <td><strong>银行ETF华宝</strong><div class="trap-warn">⚠️ PE分位偏高,需注意</div></td>
+        <td style="font-family:monospace">512800</td>
+        <td>6.79</td>
+        <td>PB破净(0.67)</td>
+        <td>100.00</td>
+        <td class="positive">2.10%</td>
+        <td class="negative">2.49%</td>
+        <td style="font-weight:700;color:#d97706">6.2</td>
+        <td class="verdict-hold">中性偏积极</td>
+      </tr></tbody>
+    </table>
+  </div>
+  <div style="margin-top:12px;font-size:13px;color:#6b7280;">
+    🔴 六维评分：估值水平/行业前景/经理能力/持仓结构/风险收益比/流动性 | 数据来源标注：neodata
+  </div>
+</div>
+
+<div class="chart-card">
+  <h2>📊 六维评分雷达对比图</h2>
+  <div style="max-width:500px;margin:0 auto;">
+    <canvas id="radarChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-card">
+  <h2>📊 总分柱状图</h2>
+  <div style="max-width:800px;margin:0 auto;">
+    <canvas id="barChart"></canvas>
+  </div>
+</div><h2 style="font-size:20px;margin:24px 0 16px;">🔍 基金详细分析</h2><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#1 恒生医疗ETF博时 <span style="font-weight:400;font-size:13px;color:#6b7280;">513060</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 29.52 · 16.48%分位 · 规模 58.51亿 · YTD -7.86%</div>
+        
+      </div>
+      <div class="score" style="color:#059669">7.8</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟢 买入持有</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -7.86%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-2.86%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">7月主力博弈激烈</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">29.52</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">16.48%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>8.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:85.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>6.8</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:68.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>9.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:90.0%;background:#059669"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#2 中概互联网ETF易方达 <span style="font-weight:400;font-size:13px;color:#6b7280;">513050</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 16.44 · 10.57%分位 · 规模 375.92亿 · YTD -24.94%</div>
+        
+      </div>
+      <div class="score" style="color:#059669">7.5</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟢 谨慎买入</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -24.94%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-0.23%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近3日净流入9.05亿</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">16.44</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">10.57%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>9.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:90.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.7</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:77.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>5.6</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:55.99999999999999%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>10.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:100.0%;background:#059669"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#3 证券ETF国泰 <span style="font-weight:400;font-size:13px;color:#6b7280;">512880</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 15.2 · 3.52%分位 · 规模 630.39亿 · YTD -8.68%</div>
+        
+      </div>
+      <div class="score" style="color:#059669">7.38</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟢 谨慎买入</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -8.68%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-0.12%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近20日净流入50.20亿</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">15.2</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">3.52%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>9.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:90.0%;background:#059669"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#4 消费ETF汇添富 <span style="font-weight:400;font-size:13px;color:#6b7280;">159928</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 20.58 · 12.62%分位 · 规模 155.12亿 · YTD -5.20%</div>
+        
+      </div>
+      <div class="score" style="color:#059669">7.2</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟢 谨慎买入</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -5.20%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">0.10%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近5日净流入4699万</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">20.58</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">12.62%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>8.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:85.0%;background:#059669"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#5 恒生互联网ETF华夏 <span style="font-weight:400;font-size:13px;color:#6b7280;">513330</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 21.73 · 16.67%分位 · 规模 282.43亿 · YTD -22.02%</div>
+        
+      </div>
+      <div class="score" style="color:#d97706">6.8</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟡 中性偏多</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -22.02%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-0.42%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近1周规模+9.55亿</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">21.73</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">16.67%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>8.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:85.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>6.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:65.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>6.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:65.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>5.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:55.00000000000001%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>9.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:90.0%;background:#059669"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#6 证券ETF华夏 <span style="font-weight:400;font-size:13px;color:#6b7280;">515010</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 14.83 · 5.28%分位 · 规模 27.44亿 · YTD -6.50%</div>
+        
+      </div>
+      <div class="score" style="color:#d97706">6.8</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟡 中性偏多</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -6.50%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-0.05%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近20日净流入5.93亿</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">14.83</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">5.28%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>6.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:65.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#7 上证180ETF平安 <span style="font-weight:400;font-size:13px;color:#6b7280;">530280</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 11.77 · 10.57%分位 · 规模 5.00亿 · YTD -1.73%</div>
+        <div style="color:#dc2626;font-size:13px;margin-top:6px;">⚠️ 规模偏小仅3500万</div>
+      </div>
+      <div class="score" style="color:#d97706">6.8</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟡 谨慎关注</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -1.73%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-0.11%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近期资金小幅流出</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">11.77</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">10.57%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>9.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:90.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>4.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:40.0%;background:#dc2626"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#8 新能源ETF华夏 <span style="font-weight:400;font-size:13px;color:#6b7280;">516850</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 34.68 · 0.83%分位 · 规模 1.32亿 · YTD -14.45%</div>
+        <div style="color:#dc2626;font-size:13px;margin-top:6px;">⚠️ 规模仅1.32亿偏小</div>
+      </div>
+      <div class="score" style="color:#d97706">6.5</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟡 谨慎关注</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -14.45%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">-0.90%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近20日净申购111万</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">34.68</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">0.83%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:75.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>3.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:35.0%;background:#dc2626"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#9 旅游ETF富国 <span style="font-weight:400;font-size:13px;color:#6b7280;">159766</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 67.81 · 0.56%分位 · 规模 29.32亿 · YTD -29.73%</div>
+        <div style="color:#dc2626;font-size:13px;margin-top:6px;">⚠️ 盈利压缩型低PE(PE67.81/分位0.56%)</div>
+      </div>
+      <div class="score" style="color:#d97706">6.3</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟡 谨慎关注</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🔴 -29.73%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="">0.10%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近5日净流入1.37亿</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">67.81</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">0.56%分位</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>5.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:50.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>6.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:65.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div></div></div></div></div><div class="fund-card">
+    <div class="fund-card-header" onclick="var b=this.nextElementSibling;b.style.display=b.style.display=='none'?'':'none'">
+      <div class="left">
+        <h3>#10 银行ETF华宝 <span style="font-weight:400;font-size:13px;color:#6b7280;">512800</span></h3>
+        <div style="font-size:13px;color:#6b7280;">PE 6.79 · PB破净(0.67) · 规模 100.00亿 · YTD 2.10%</div>
+        <div style="color:#dc2626;font-size:13px;margin-top:6px;">⚠️ PE分位偏高,需注意</div>
+      </div>
+      <div class="score" style="color:#d97706">6.2</div>
+    </div>
+    <div class="fund-card-body">
+      <div class="detail-grid">
+        <div class="detail-item"><label>建议</label><div class="val">🟡 中性偏积极</div></div>
+        <div class="detail-item"><label>YTD涨幅</label><div class="val">🟢 2.10%</div></div>
+        <div class="detail-item"><label>溢价率</label><div class="val" style="color:#dc2626;">2.49%</div></div>
+        <div class="detail-item"><label>资金流向</label><div class="val" style="font-size:13px;">近5日主力净流入26.78亿</div></div>
+        <div class="detail-item"><label>PE</label><div class="val">6.79</div></div>
+        <div class="detail-item"><label>PE分位</label><div class="val">PB破净(0.67)</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">六维评分：</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>估值水平</span><span>6.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:60.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>行业前景</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>经理能力</span><span>7.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:70.0%;background:#059669"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>持仓结构</span><span>6.5</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:65.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>风险收益比</span><span>5.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:50.0%;background:#d97706"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:12px;"><span>流动性</span><span>8.0</span></div>
+          <div class="score-bar"><div class="score-bar-inner" style="width:80.0%;background:#059669"></div></div></div></div></div></div></div>
+<div class="chart-card">
+  <h2>📋 结论汇总</h2>
+  <div style="line-height:1.8;font-size:14px;">
+    <p><strong>Top 3推荐：</strong></p>
+    <ol style="margin-left:20px;">
+      <li><strong>恒生医疗ETF博时 (513060)</strong> — 总分 7.8 — 买入持有。PE分位仅16.48%分位，规模58.51亿流动性极佳，近20日净流入超50亿。</li>
+      <li><strong>中概互联网ETF易方达 (513050)</strong> — 总分 7.5 — 谨慎买入。中概互联PE分位处于历史大底，规模近400亿，AI催化+外资回流。</li>
+      <li><strong>证券ETF国泰 (512880)</strong> — 总分 7.38 — 谨慎买入。消费龙头估值历史低位，十五五消费规划强力政策支撑。</li>
+    </ol>
+    <p style="margin-top:12px;"><strong>⚠️ 风险关注：</strong></p>
+    <ul style="margin-left:20px;">
+      <li>银行ETF华宝(512800)溢价率2.49%偏高，需注意溢价回落风险</li>
+      <li>旅游ETF富国(159766)PE 67.81倍但分位0.56%，属盈利压缩型低PE</li>
+      <li>新能源ETF华夏(516850)规模仅1.32亿偏小，流动性不足</li>
+      <li>上证180ETF平安(530280)规模偏小，日均成交约80万</li>
+      <li>美联储年内持续鹰派、中东地缘风险影响全球流动性</li>
+    </ul>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <p>⚠️ 数据来源：NeoData Financial Search（neodata-financial-search） | 基金海选通过天天基金、雪球、平安基金等5+渠道完成</p>
+  <p>本报告基于公开信息整理生成，仅供参考，不构成任何投资建议或基金推荐。基金有风险，投资需谨慎。过往表现不代表未来收益。</p>
+  <p style="margin-top:8px;">📁 分析证据文件：deliverables/fund-analysis/（10只基金独立MD分析文件，含neodata原始查询输出）</p>
+</div>
+
+<script>
+const fundNames = ["\u6052\u751f\u533b\u7597ETF\u535a\u65f6", "\u4e2d\u6982\u4e92\u8054\u7f51ETF\u6613\u65b9\u8fbe", "\u8bc1\u5238ETF\u56fd\u6cf0", "\u6d88\u8d39ETF\u6c47\u6dfb\u5bcc", "\u6052\u751f\u4e92\u8054\u7f51ETF\u534e\u590f", "\u8bc1\u5238ETF\u534e\u590f", "\u4e0a\u8bc1180ETF\u5e73\u5b89", "\u65b0\u80fd\u6e90ETF\u534e\u590f", "\u65c5\u6e38ETF\u5bcc\u56fd", "\u94f6\u884cETF\u534e\u5b9d"];
+const fundCodes = ["513060", "513050", "512880", "159928", "513330", "515010", "530280", "516850", "159766", "512800"];
+const radarLabels = ["\u4f30\u503c\u6c34\u5e73", "\u884c\u4e1a\u524d\u666f", "\u7ecf\u7406\u80fd\u529b", "\u6301\u4ed3\u7ed3\u6784", "\u98ce\u9669\u6536\u76ca\u6bd4", "\u6d41\u52a8\u6027"];
+
+const ctx1 = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'radar',
+  data: {
+    labels: radarLabels,
+    datasets: [
+      {label: fundNames[0], data: [8.5, 8.0, 7.0, 7.5, 6.8, 9.0], borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.1)', pointBackgroundColor: '#059669'},
+      {label: fundNames[1], data: [9.0, 7.0, 7.5, 7.7, 5.6, 10.0], borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.1)', pointBackgroundColor: '#2563eb'},
+      {label: fundNames[2], data: [7.5, 8.0, 6.0, 7.0, 7.0, 9.0], borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.1)', pointBackgroundColor: '#d97706'}
+    ]
+  },
+  options: {scales: {r: {min: 0, max: 10, ticks: {stepSize: 2}}}, plugins: {legend: {position: 'bottom'}}}
+});
+
+const ctx2 = document.getElementById('barChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels: fundCodes.map((c,i) => c + ' ' + fundNames[i].slice(0,6)),
+    datasets: [{label: '综合评分', data: [7.8, 7.5, 7.38, 7.2, 6.8, 6.8, 6.8, 6.5, 6.3, 6.2], backgroundColor: ["#059669", "#059669", "#059669", "#059669", "#d97706", "#d97706", "#d97706", "#d97706", "#6b7280", "#6b7280"], borderRadius: 4}]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {x: {min: 0, max: 10}, y: {ticks: {fontSize: 11}}},
+    plugins: {legend: {display: false}}
+  }
+});
+</script>
+</body>
+</html>
