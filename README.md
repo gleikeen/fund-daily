@@ -1,6 +1,6 @@
 # 基金日报 · 低估基金筛选与评估
 
-最新报告：[2026-07-31 盘后](fund-report-2026-07-31-盘后.html)（上一期：[盘中](fund-report-2026-07-31-盘中.html)）
+最新报告：[2026-07-31 盘后](fund-report-2026-07-31-盘后.html)（上一期：[盘中](fund-report-2026-07-31-盘中.html)） · Top3：医疗ETF华宝 8.02 / 港股通互联网ETF富国 7.93 / 银行ETF华宝 7.89
 
 > 每日通过多Agent系统（海选50+ → Top 10）筛选PE分位<20%的低估基金，每只基金独立Agent使用 neodata-financial-search 进行全面分析。
 >
