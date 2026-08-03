@@ -1,6 +1,6 @@
 # 基金日报 · 低估基金筛选与评估
 
-最新报告：[2026-08-03 盘中](fund-report-2026-08-03-盘中.html)（上一期：[盘后](fund-report-2026-07-31-盘后.html)） · Top3：中概互联ETF 7.60 / 证券ETF国泰 7.50 / 券商ETF华宝 7.50
+最新报告：[2026-08-03 盘中](fund-report-2026-08-03-盘中.html)（上一期：[盘后](fund-report-2026-07-31-盘后.html)） · Top3：中概互联ETF 7.70 / 证券ETF国泰 7.50 / 医药ETF易方达 7.50
 
 > 每日通过多Agent系统（海选50+ → Top 10）筛选PE分位<20%的低估基金，每只基金独立Agent使用 neodata-financial-search 进行全面分析。
 >
