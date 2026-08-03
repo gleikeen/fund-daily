@@ -1,2 +1,23 @@
+# macOS
 .DS_Store
+
+# WorkBuddy 内部
 .workbuddy/
+
+# 🔴 2026-08-03 新规则：git 只跟踪 HTML 报告，其他内容文件全部忽略
+# （MD证据/JSON/脚本/README 保留本地但不提交，避免仓库臃肿）
+
+# 默认忽略一切文件
+*
+
+# 白名单：根目录 HTML 报告 + 首页
+!/index.html
+!/fund-report-*.html
+
+# 项目基础设施（保留跟踪）
+!/.gitignore
+!/.nojekyll
+!/.githooks/
+!/.githooks/**
+!/.github/
+!/.github/**
