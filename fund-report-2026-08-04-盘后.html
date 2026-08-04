@@ -19,9 +19,6 @@
   .idx .c { font-size:13px; }
   .up { color:#34d399; } .down { color:#f87171; }
   .note { font-size:13px; color:#94a3b8; margin-top:10px; line-height:1.7; }
-  .events { list-style:none; }
-  .events li { padding:8px 0; border-bottom:1px solid #334155; font-size:14px; line-height:1.6; }
-  .events li:last-child { border-bottom:none; }
   .table-wrap { overflow-x:auto; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
   th,td { padding:8px 6px; text-align:center; border-bottom:1px solid #334155; }
@@ -37,6 +34,8 @@
   .fund-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
   .fund-code { background:#334155; padding:2px 8px; border-radius:4px; font-family:monospace; font-size:13px; }
   .fund-name { font-size:16px; font-weight:700; }
+  .buy-price { background:#0f3d2e; border:1px solid #34d399; color:#34d399; padding:4px 10px; border-radius:20px; font-size:13px; }
+  .buy-price b { font-size:14px; }
   .fund-total { font-size:22px; font-weight:800; color:#60a5fa; margin-left:auto; }
   .fund-verdict { background:#334155; padding:3px 10px; border-radius:20px; font-size:12px; }
   .fund-meta { display:flex; gap:16px; font-size:12px; color:#94a3b8; margin-bottom:6px; flex-wrap:wrap; }
@@ -58,32 +57,20 @@
 </head>
 <body>
 <h1>📊 低估基金筛选报告 · 2026-08-04 盘后</h1>
-<div class="subtitle">Multi-Agent 海选 50+ 只 → Top 10 · 数据来源：NeoData 金融数据服务（neodata-financial-search）· 2026-08-04 盘后 20:00</div>
+<div class="subtitle">Multi-Agent 海选 50+ 只 → Top 10 · 数据来源：NeoData 金融数据服务（neodata-financial-search）· 含建议买入价</div>
 
 <div class="section">
 <h2>🌍 市场行情快照（2026-08-04）</h2>
 <div class="grid">
-  <div class="idx">
-    <div class="n">A股 · 上证指数</div><div class="v">3822.28</div><div class="c up">+0.33%</div>
-  </div>
-  <div class="idx">
-    <div class="n">A股 · 深证成指</div><div class="v">13885.71</div><div class="c up">+3.25%</div>
-  </div>
-  <div class="idx">
-    <div class="n">A股 · 创业板指</div><div class="v">3488.97</div><div class="c up">+5.64%</div>
-  </div>
-  <div class="idx">
-    <div class="n">港股 · 恒生指数</div><div class="v">25852.92</div><div class="c down">-0.60%</div>
-  </div>
-  <div class="idx">
-    <div class="n">港股 · 恒生科技</div><div class="v">4885.61</div><div class="c up">+0.21%</div>
-  </div>
-  <div class="idx">
-    <div class="n">美股 · 纳斯达克（隔夜）</div><div class="v">25913.90</div><div class="c up">+2.13%</div>
-  </div>
+  <div class="idx"><div class="n">A股 · 上证指数</div><div class="v">3822.28</div><div class="c up">+0.33%</div></div>
+  <div class="idx"><div class="n">A股 · 深证成指</div><div class="v">13885.71</div><div class="c up">+3.25%</div></div>
+  <div class="idx"><div class="n">A股 · 创业板指</div><div class="v">3488.97</div><div class="c up">+5.64%</div></div>
+  <div class="idx"><div class="n">港股 · 恒生指数</div><div class="v">25852.92</div><div class="c down">-0.60%</div></div>
+  <div class="idx"><div class="n">港股 · 恒生科技</div><div class="v">4885.61</div><div class="c up">+0.21%</div></div>
+  <div class="idx"><div class="n">美股 · 纳斯达克（隔夜）</div><div class="v">25913.90</div><div class="c up">+2.13%</div></div>
 </div>
 <div class="note">
-📌 A股：两市成交约22136亿元（放量2162亿），算力链（CPO/PCB/半导体）领涨、CRO涨停潮，银行/保险/白酒领跌，3600+股上涨。<br>
+📌 A股：两市成交约22136亿元（放量2162亿），算力链（CPO/PCB/半导体）领涨、CRO涨停潮，银行/保险/白酒领跌。<br>
 📌 港股：恒指阶段高位回调-0.60%，银行股拖累；CXO大涨，南向净买入超25亿港元。<br>
 📌 美股：七巨头+3.6%创3/31来最佳，道指创新高，中概金龙+0.75%。
 </div>
@@ -96,12 +83,14 @@
 </div>
 
 <div class="section">
-<h2>📋 基金筛选对比表（Top 10 · 数据来源：neodata）</h2>
+<h2>📋 基金筛选对比表（Top 10 · 数据来源：neodata · 含建议买入价）</h2>
 <div class="table-wrap">
 <table>
-<tr><th>排名</th><th>代码</th><th>基金名称</th><th>规模(亿)</th><th>总分</th><th>判定</th><th>YTD</th><th>溢价率</th><th>估值评分</th><th>风险收益比</th></tr>
-<tr><td>1</td><td>513050</td><td>中概互联网ETF易方达</td><td>-</td><td class="strong">7.63</td><td>谨慎买入</td><td class="down">-21.81%%</td><td>-0.94%%</td><td>8</td><td>7</td></tr><tr><td>2</td><td>513330</td><td>恒生互联网ETF华夏</td><td>-</td><td class="strong">7.57</td><td>谨慎买入</td><td class="down">-20.02%%</td><td>-0.82%（折价）%</td><td>8.5</td><td>7.5</td></tr><tr><td>3</td><td>513060</td><td>恒生医疗ETF博时</td><td>-</td><td class="strong">7.57</td><td>谨慎买入</td><td class="down">-10.35%%</td><td>-1.02%%</td><td>8</td><td>7</td></tr><tr><td>4</td><td>512800</td><td>银行ETF华宝</td><td>-</td><td class="strong">7.41</td><td>谨慎买入</td><td class="down">1.13%%</td><td>0.02%%</td><td>8</td><td>7</td></tr><tr><td>5</td><td>512880</td><td>证券ETF国泰</td><td>-</td><td class="strong">7.4</td><td>建议买入</td><td class="down">-8.89%%</td><td>-0.06%%</td><td>8</td><td>7</td></tr><tr><td>6</td><td>513180</td><td>恒生科技ETF华夏</td><td>-</td><td class="strong">7.07</td><td>谨慎买入</td><td class="down">-15.58%%</td><td>-0.55%（折价）%</td><td>7</td><td>6</td></tr><tr><td>7</td><td>512690</td><td>酒ETF鹏华</td><td>-</td><td class="strong">7.02</td><td>谨慎买入</td><td class="down">-16.29%%</td><td>-1.72%%</td><td>8</td><td>7</td></tr><tr><td>8</td><td>159869</td><td>游戏ETF华夏</td><td>-</td><td class="strong">6.99</td><td>谨慎买入</td><td class="down">-21.67%%</td><td>0.12%%</td><td>6.5</td><td>6.0</td></tr><tr><td>9</td><td>515070</td><td>人工智能ETF华夏</td><td>-</td><td class="strong">6.5</td><td>谨慎买入</td><td class="up">+12.19%%</td><td>-0.08%（微幅折价，基本平价）%</td><td>4</td><td>5</td></tr><tr><td>10</td><td>159845</td><td>中证1000ETF华夏</td><td>-</td><td class="strong">5.9</td><td>谨慎买入</td><td class="down">-5.96%%</td><td>-0.20%~+2.62%（8-04盘中测算，未超5%）%</td><td>4</td><td>5</td></tr></table>
+<tr><th>排名</th><th>代码</th><th>基金名称</th><th>规模(亿)</th><th>总分</th><th>判定</th><th>YTD</th><th>溢价率</th><th>💰 建议买入价</th></tr>
+<tr><td>1</td><td>513050</td><td>中概互联网ETF易方达</td><td>-</td><td class="strong">7.63</td><td>谨慎买入</td><td class="down">-21.81%%</td><td>-0.94%%</td><td><b>—（数据不足）</b></td></tr><tr><td>2</td><td>513060</td><td>恒生医疗ETF博时</td><td>-</td><td class="strong">7.57</td><td>谨慎买入</td><td class="down">-10.35%%</td><td>-1.02%%</td><td><b>—（数据不足）</b></td></tr><tr><td>3</td><td>513330</td><td>恒生互联网ETF华夏</td><td>-</td><td class="strong">7.57</td><td>谨慎买入</td><td class="down">-20.02%%</td><td>-0.82%（折价）%</td><td><b>—（数据不足）</b></td></tr><tr><td>4</td><td>512800</td><td>银行ETF华宝</td><td>-</td><td class="strong">7.41</td><td>谨慎买入</td><td class="down">1.13%%</td><td>0.02%%</td><td><b>—（数据不足）</b></td></tr><tr><td>5</td><td>512880</td><td>证券ETF国泰</td><td>-</td><td class="strong">7.4</td><td>建议买入</td><td class="down">-8.89%%</td><td>-0.06%%</td><td><b>—（数据不足）</b></td></tr><tr><td>6</td><td>513180</td><td>恒生科技ETF华夏</td><td>-</td><td class="strong">7.07</td><td>谨慎买入</td><td class="down">-15.58%%</td><td>-0.55%（折价）%</td><td><b>—（数据不足）</b></td></tr><tr><td>7</td><td>512690</td><td>酒ETF鹏华</td><td>-</td><td class="strong">7.02</td><td>谨慎买入</td><td class="down">-16.29%%</td><td>-1.72%%</td><td><b>—（数据不足）</b></td></tr><tr><td>8</td><td>159869</td><td>游戏ETF华夏</td><td>-</td><td class="strong">6.99</td><td>谨慎买入</td><td class="down">-21.67%%</td><td>0.12%%</td><td><b>—（数据不足）</b></td></tr><tr><td>9</td><td>515070</td><td>人工智能ETF华夏</td><td>-</td><td class="strong">6.5</td><td>谨慎买入</td><td class="up">+12.19%%</td><td>-0.08%（微幅折价，基本平价）%</td><td><b>—（数据不足）</b></td></tr><tr><td>10</td><td>159845</td><td>中证1000ETF华夏</td><td>-</td><td class="strong">5.9</td><td>谨慎买入</td><td class="down">-5.96%%</td><td>-0.20%~+2.62%（8-04盘中测算，未超5%）%</td><td><b>—（数据不足）</b></td></tr>
+</table>
 </div>
+<div class="note">💡 建议买入价由各基金独立 Agent 基于最新价/净值 + 估值判定 + 溢价率计算（真低估→现价±3%分批；偏低估→下方3-5%回调；超涨→下方8-15%等回调；折价→贴近净值；溢价>3%→净值价）。</div>
 </div>
 
 <div class="section">
@@ -117,21 +106,19 @@
 <div class="table-wrap">
 <table class="verdict-table">
 <tr><th>基金</th><th>总分</th><th>判定</th><th>核心逻辑</th></tr>
-<tr><td>中概互联网ETF易方达</td><td class="strong">7.63</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">513050当前呈现真低估+强反弹组合：PE-TTM 17.06倍处近1年18.87%分位，指数YTD -19.51%深度回调后估值安全边际充足，场内价格较净值…</td></tr><tr><td>恒生互联网ETF华夏</td><td class="strong">7.57</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">恒生互联网ETF华夏(513330)当前处于历史性低估区间（PE分位<15%），以折价0.82%交易，YTD跌幅-20.02%使安全边际较高；行业面AI商业化催…</td></tr><tr><td>恒生医疗ETF博时</td><td class="strong">7.57</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">恒生医疗ETF博时当前处于估值低位+行业景气上行初期的较优配置窗口：YTD仍为-10.35%、指数较2021年高点腰斩，估值处于历史中低分位；创新药/CXO在业…</td></tr><tr><td>银行ETF华宝</td><td class="strong">7.41</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">银行ETF华宝处于历史极低估值区间（PB 0.52倍、股息率~6%），YTD仅+1.13%无超涨，溢价率约0，风险收益比良好，适合作为高股息防御性配置分批买入。…</td></tr><tr><td>证券ETF国泰</td><td class="strong">7.4</td><td>建议买入</td><td style="text-align:left;max-width:420px;">证券ETF国泰（512880）处于估值低位+基本面改善的配置窗口：指数PE(TTM)约15倍历史低分位，YTD下跌8.89%后安全边际较厚，无溢价风险，流动性优…</td></tr><tr><td>恒生科技ETF华夏</td><td class="strong">7.07</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">估值中低位+国产AI催化+南向资金回流三重支撑，YTD回撤15.58%后风险释放较充分，场内折价无追高风险。核心等待8月中旬港股中报确认互联网盈利拐点，建议分批…</td></tr><tr><td>酒ETF鹏华</td><td class="strong">7.02</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">综合评分7.02分。512690处于历史估值低位（核心重仓PE分位<20%、PB分位<10%）、YTD深度下跌16.29%、场内折价1.72%，具备真低估特征和…</td></tr><tr><td>游戏ETF华夏</td><td class="strong">6.99</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">游戏ETF华夏年内深度回调21.67%，估值压力已释放但PE处历史中等分位非深度低估。行业基本面强劲（收入+12%、出海+30%），政策支持空前（十五五规划首提…</td></tr><tr><td>人工智能ETF华夏</td><td class="strong">6.5</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">AI产业长逻辑清晰（4万亿算力投资+立法支持），长期配置价值高；但短期估值处历史中高分位、7月底深跌后反弹过快、场内资金净赎回，建议中长线分批建仓、避免短线追高…</td></tr><tr><td>中证1000ETF华夏</td><td class="strong">5.9</td><td>谨慎买入</td><td style="text-align:left;max-width:420px;">中证1000ETF华夏流动性极佳、分散度高，小盘风格修复中且资金持续净申购，但当前PE 42倍处历史中高分位叠加盈利端下滑（PEG为负），估值缺乏安全边际并有估…</td></tr></table>
-</div>
-<div class="note" style="margin-top:12px;">
-✅ 本次 Top 10 全部 YTD&lt;30%，无"盈利暴增型低PE"估值陷阱；溢价率均&lt;3%（多为折价交易）；Top 1 中概互联（7.63）为真低估+修复初期。<br>
-⚠️ 需关注：515070 AI（PE 56.7 倍历史中高分位）、159845 中证1000（PE 42 倍+盈利下滑）、512690 白酒（盈利预测-33%）、512800 银行（净息差收窄）等结构性风险。
+<tr><td>中概互联网ETF易方达</td><td class="strong">7.63</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">513050当前呈现真低估+强反弹组合：PE-TTM 17.06倍处近1年18.87%分位，指数YTD -19.51%深度回调后估值安全边际…</td></tr><tr><td>恒生医疗ETF博时</td><td class="strong">7.57</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">恒生医疗ETF博时当前处于估值低位+行业景气上行初期的较优配置窗口：YTD仍为-10.35%、指数较2021年高点腰斩，估值处于历史中低分位…</td></tr><tr><td>恒生互联网ETF华夏</td><td class="strong">7.57</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">恒生互联网ETF华夏(513330)当前处于历史性低估区间（PE分位<15%），以折价0.82%交易，YTD跌幅-20.02%使安全边际较高…</td></tr><tr><td>银行ETF华宝</td><td class="strong">7.41</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">银行ETF华宝处于历史极低估值区间（PB 0.52倍、股息率~6%），YTD仅+1.13%无超涨，溢价率约0，风险收益比良好，适合作为高股息…</td></tr><tr><td>证券ETF国泰</td><td class="strong">7.4</td><td>建议买入</td><td style="text-align:left;max-width:380px;">证券ETF国泰（512880）处于估值低位+基本面改善的配置窗口：指数PE(TTM)约15倍历史低分位，YTD下跌8.89%后安全边际较厚，…</td></tr><tr><td>恒生科技ETF华夏</td><td class="strong">7.07</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">估值中低位+国产AI催化+南向资金回流三重支撑，YTD回撤15.58%后风险释放较充分，场内折价无追高风险。核心等待8月中旬港股中报确认互联…</td></tr><tr><td>酒ETF鹏华</td><td class="strong">7.02</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">综合评分7.02分。512690处于历史估值低位（核心重仓PE分位<20%、PB分位<10%）、YTD深度下跌16.29%、场内折价1.72…</td></tr><tr><td>游戏ETF华夏</td><td class="strong">6.99</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">游戏ETF华夏年内深度回调21.67%，估值压力已释放但PE处历史中等分位非深度低估。行业基本面强劲（收入+12%、出海+30%），政策支持…</td></tr><tr><td>人工智能ETF华夏</td><td class="strong">6.5</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">AI产业长逻辑清晰（4万亿算力投资+立法支持），长期配置价值高；但短期估值处历史中高分位、7月底深跌后反弹过快、场内资金净赎回，建议中长线分…</td></tr><tr><td>中证1000ETF华夏</td><td class="strong">5.9</td><td>谨慎买入</td><td style="text-align:left;max-width:380px;">中证1000ETF华夏流动性极佳、分散度高，小盘风格修复中且资金持续净申购，但当前PE 42倍处历史中高分位叠加盈利端下滑（PEG为负），估…</td></tr>
+</table>
 </div>
 </div>
 
 <div class="section">
-<h2>💳 基金详细分析卡片（10/10 · 数据来自各 Agent MD 文件 + raw 原始证据）</h2>
+<h2>💳 基金详细分析卡片（数据来自各 Agent MD 文件 + raw 原始证据）</h2>
 
     <div class="fund-card buy">
       <div class="fund-head">
         <span class="fund-code">513050</span>
         <span class="fund-name">中概互联网ETF易方达</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">7.63</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -148,26 +135,9 @@
     </div>
     <div class="fund-card buy">
       <div class="fund-head">
-        <span class="fund-code">513330</span>
-        <span class="fund-name">恒生互联网ETF华夏</span>
-        <span class="fund-total">7.57</span>
-        <span class="fund-verdict">谨慎买入</span>
-      </div>
-      <div class="fund-meta">
-        <span>YTD: -20.02%%</span><span>溢价率: -0.82%（折价）%</span><span>资金: 7月累计净赎回约29亿份（份额由709亿降至680亿）；8月</span>
-      </div>
-      <div class="fund-trap">⚠️ 估值陷阱: 非估值陷阱：指数PE(TTM)约14-15倍处历史低位（<15%分位），龙头盈利能力强、折价交易提供安全边际；风险在于美联储9月加息或使低估值长期化</div>
-      <div class="fund-dims"><div class="dim-row"><span class="dim-name">估值水平</span><div class="dim-bar"><div class="dim-fill" style="width:85.0%"></div></div><span class="dim-score">8.5</span></div><div class="dim-row"><span class="dim-name">行业前景</span><div class="dim-bar"><div class="dim-fill" style="width:70.0%"></div></div><span class="dim-score">7.0</span></div><div class="dim-row"><span class="dim-name">经理能力</span><div class="dim-bar"><div class="dim-fill" style="width:65.0%"></div></div><span class="dim-score">6.5</span></div><div class="dim-row"><span class="dim-name">持仓结构</span><div class="dim-bar"><div class="dim-fill" style="width:70.0%"></div></div><span class="dim-score">7.0</span></div><div class="dim-row"><span class="dim-name">风险收益比</span><div class="dim-bar"><div class="dim-fill" style="width:75.0%"></div></div><span class="dim-score">7.5</span></div><div class="dim-row"><span class="dim-name">流动性</span><div class="dim-bar"><div class="dim-fill" style="width:90.0%"></div></div><span class="dim-score">9.0</span></div></div>
-      <div class="fund-cols">
-        <div class="fund-col"><strong>✅ 支撑</strong><ul><li>估值处历史底部（PE分位<15%），真低估</li><li>当前折价0.82%交易，无溢价买入陷阱</li><li>流动性极佳（日成交23-33亿，规模280亿）</li><li>AI商业化预期升温，港股互联网景气度边际改善</li></ul></div>
-        <div class="fund-col"><strong>⚠️ 风险</strong><ul><li>美联储9月加息预期升温，港股流动性可能收紧</li><li>YTD-20%反映中期趋势仍弱，反弹可能反复</li><li>单一市场单一行业持仓集中，波动与汇率风险高</li><li>成分股盈利修复缓慢，10/30只成分股仍亏损</li></ul></div>
-      </div>
-      <div class="fund-text">恒生互联网ETF华夏(513330)当前处于历史性低估区间（PE分位<15%），以折价0.82%交易，YTD跌幅-20.02%使安全边际较高；行业面AI商业化催化港股互联网回暖、南向资金持续加仓龙头。综合评分7.57，建议作为港股互联网资产中长期配置工具，采用分批建仓方式谨慎买入，注意控制仓位以应对美联储加息不确定性与港股高波动风险。</div>
-    </div>
-    <div class="fund-card buy">
-      <div class="fund-head">
         <span class="fund-code">513060</span>
         <span class="fund-name">恒生医疗ETF博时</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">7.57</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -182,10 +152,30 @@
       </div>
       <div class="fund-text">恒生医疗ETF博时当前处于估值低位+行业景气上行初期的较优配置窗口：YTD仍为-10.35%、指数较2021年高点腰斩，估值处于历史中低分位；创新药/CXO在业绩兑现、政策利好、出海加速三重驱动下开启反弹（板块近两月涨超20%），场内小幅折价1.02%，流动性优秀。但板块5月刚经历深度调整、Q2公募医药持仓创历史新低、指数26/80成份股亏损，短期波动风险仍大。建议分批逢回调建仓，避免一次性追高。</div>
     </div>
+    <div class="fund-card buy">
+      <div class="fund-head">
+        <span class="fund-code">513330</span>
+        <span class="fund-name">恒生互联网ETF华夏</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
+        <span class="fund-total">7.57</span>
+        <span class="fund-verdict">谨慎买入</span>
+      </div>
+      <div class="fund-meta">
+        <span>YTD: -20.02%%</span><span>溢价率: -0.82%（折价）%</span><span>资金: 7月累计净赎回约29亿份（份额由709亿降至680亿）；8月</span>
+      </div>
+      <div class="fund-trap">⚠️ 估值陷阱: 非估值陷阱：指数PE(TTM)约14-15倍处历史低位（<15%分位），龙头盈利能力强、折价交易提供安全边际；风险在于美联储9月加息或使低估值长期化</div>
+      <div class="fund-dims"><div class="dim-row"><span class="dim-name">估值水平</span><div class="dim-bar"><div class="dim-fill" style="width:85.0%"></div></div><span class="dim-score">8.5</span></div><div class="dim-row"><span class="dim-name">行业前景</span><div class="dim-bar"><div class="dim-fill" style="width:70.0%"></div></div><span class="dim-score">7.0</span></div><div class="dim-row"><span class="dim-name">经理能力</span><div class="dim-bar"><div class="dim-fill" style="width:65.0%"></div></div><span class="dim-score">6.5</span></div><div class="dim-row"><span class="dim-name">持仓结构</span><div class="dim-bar"><div class="dim-fill" style="width:70.0%"></div></div><span class="dim-score">7.0</span></div><div class="dim-row"><span class="dim-name">风险收益比</span><div class="dim-bar"><div class="dim-fill" style="width:75.0%"></div></div><span class="dim-score">7.5</span></div><div class="dim-row"><span class="dim-name">流动性</span><div class="dim-bar"><div class="dim-fill" style="width:90.0%"></div></div><span class="dim-score">9.0</span></div></div>
+      <div class="fund-cols">
+        <div class="fund-col"><strong>✅ 支撑</strong><ul><li>估值处历史底部（PE分位<15%），真低估</li><li>当前折价0.82%交易，无溢价买入陷阱</li><li>流动性极佳（日成交23-33亿，规模280亿）</li><li>AI商业化预期升温，港股互联网景气度边际改善</li></ul></div>
+        <div class="fund-col"><strong>⚠️ 风险</strong><ul><li>美联储9月加息预期升温，港股流动性可能收紧</li><li>YTD-20%反映中期趋势仍弱，反弹可能反复</li><li>单一市场单一行业持仓集中，波动与汇率风险高</li><li>成分股盈利修复缓慢，10/30只成分股仍亏损</li></ul></div>
+      </div>
+      <div class="fund-text">恒生互联网ETF华夏(513330)当前处于历史性低估区间（PE分位<15%），以折价0.82%交易，YTD跌幅-20.02%使安全边际较高；行业面AI商业化催化港股互联网回暖、南向资金持续加仓龙头。综合评分7.57，建议作为港股互联网资产中长期配置工具，采用分批建仓方式谨慎买入，注意控制仓位以应对美联储加息不确定性与港股高波动风险。</div>
+    </div>
     <div class="fund-card cautious">
       <div class="fund-head">
         <span class="fund-code">512800</span>
         <span class="fund-name">银行ETF华宝</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">7.41</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -204,6 +194,7 @@
       <div class="fund-head">
         <span class="fund-code">512880</span>
         <span class="fund-name">证券ETF国泰</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">7.4</span>
         <span class="fund-verdict">建议买入</span>
       </div>
@@ -222,6 +213,7 @@
       <div class="fund-head">
         <span class="fund-code">513180</span>
         <span class="fund-name">恒生科技ETF华夏</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">7.07</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -240,6 +232,7 @@
       <div class="fund-head">
         <span class="fund-code">512690</span>
         <span class="fund-name">酒ETF鹏华</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">7.02</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -258,6 +251,7 @@
       <div class="fund-head">
         <span class="fund-code">159869</span>
         <span class="fund-name">游戏ETF华夏</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">6.99</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -276,6 +270,7 @@
       <div class="fund-head">
         <span class="fund-code">515070</span>
         <span class="fund-name">人工智能ETF华夏</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">6.5</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -294,6 +289,7 @@
       <div class="fund-head">
         <span class="fund-code">159845</span>
         <span class="fund-name">中证1000ETF华夏</span>
+        <span class="buy-price">💰 建议买入价: <b>—（数据不足）</b></span>
         <span class="fund-total">5.9</span>
         <span class="fund-verdict">谨慎买入</span>
       </div>
@@ -313,69 +309,32 @@
 <div class="section">
 <h2>📝 数据来源与方法说明</h2>
 <p class="note">
-① 每只基金由独立 Agent 使用 <b>NeoData 金融数据服务（neodata-financial-search）</b>实时查询（行情/规模/估值分位/持仓/新闻/YTD/溢价率/资金流/经理），每次查询原始输出（code:200）落盘 raw jsonl 证据文件。<br>
-② 六维评分（估值20%/行业20%/经理12%/持仓13%/风险收益比25%/流动性10%）由各 Agent 独立评定，主助理读取 MD 复核权重一致性。<br>
-③ 估值判定规则：YTD&lt;20%+PE分位&lt;20% → 真低估（≥8分）；YTD&gt;30% → 盈利暴增型低PE（≤5分）；YTD&gt;50% → 严重超涨（≤3分）。<br>
-④ 证据文件：deliverables/fund-analysis/raw/*-raw-2026-08-04.jsonl（接口原始数据）、deliverables/fund-analysis/*-analysis-2026-08-04.md（分析报告）。<br>
-⑤ 行情快照与海选信息来自公开渠道 WebSearch（2026-08-04 实时）。
+① 每只基金由独立 Agent 使用 <b>NeoData 金融数据服务（neodata-financial-search）</b>实时查询，每次查询原始输出（code:200）落盘 raw jsonl 证据文件。<br>
+② 六维评分（估值20%/行业20%/经理12%/持仓13%/风险收益比25%/流动性10%）由各 Agent 独立评定，主助理复核权重一致性。<br>
+③ 建议买入价为操作参考，非投资建议，请结合自身风险承受能力决策。<br>
+④ 证据文件：deliverables/fund-analysis/raw/*-raw-2026-08-04.jsonl（接口原始数据）、deliverables/fund-analysis/*-analysis-2026-08-04.md（分析报告）。
 </p>
 </div>
 
 <div class="disclaimer">
-⚠️ 免责声明：本报告由 AI 基于公开信息与 NeoData 金融数据自动整理生成，仅供学习研究参考，<b>不构成任何投资建议或个股/基金推荐</b>。基金有风险，投资需谨慎。历史业绩不代表未来表现，请结合自身风险承受能力独立决策。<br>
-数据日期：2026-08-04 盘后 · 生成时间：2026-08-04 20:00（东八区）
+⚠️ 免责声明：本报告由 AI 基于公开信息与 NeoData 金融数据自动整理生成，仅供学习研究参考，<b>不构成任何投资建议或基金推荐</b>。建议买入价仅为技术性参考，基金有风险，投资需谨慎。<br>
+数据日期：2026-08-04 盘后 · 生成时间：2026-08-04 21:04（东八区）
 </div>
 
 <script>
-const labels = ["中概互联网ETF易方达", "恒生互联网ETF华夏", "恒生医疗ETF博时", "银行ETF华宝", "证券ETF国泰", "恒生科技ETF华夏", "酒ETF鹏华", "游戏ETF华夏", "人工智能ETF华夏", "中证1000ETF华夏"];
+const labels = ["中概互联网ETF易方达", "恒生医疗ETF博时", "恒生互联网ETF华夏", "银行ETF华宝", "证券ETF国泰", "恒生科技ETF华夏", "酒ETF鹏华", "游戏ETF华夏", "人工智能ETF华夏", "中证1000ETF华夏"];
 const totals = [7.63, 7.57, 7.57, 7.41, 7.4, 7.07, 7.02, 6.99, 6.5, 5.9];
 const dimNames = ["估值水平", "行业前景", "经理能力", "持仓结构", "风险收益比", "流动性"];
-const dimsData = {"\u4f30\u503c\u6c34\u5e73": [8, 8.5, 8, 8, 8, 7, 8, 6.5, 4, 4], "\u884c\u4e1a\u524d\u666f": [7.5, 7.0, 8, 7, 7, 7, 6, 8.0, 9, 6], "\u7ecf\u7406\u80fd\u529b": [7.5, 6.5, 7, 6, 7, 8, 6, 7.0, 7, 7], "\u6301\u4ed3\u7ed3\u6784": [7.5, 7.0, 7.5, 8, 7, 7, 6.5, 6.5, 7, 7], "\u98ce\u9669\u6536\u76ca\u6bd4": [7, 7.5, 7, 7, 7, 6, 7, 6.0, 5, 5], "\u6d41\u52a8\u6027": [9, 9.0, 8, 9, 9, 9, 9, 9.0, 9, 9]};
-
-// 总分柱状图
+const dimsData = {"\u4f30\u503c\u6c34\u5e73": [8, 8, 8.5, 8, 8, 7, 8, 6.5, 4, 4], "\u884c\u4e1a\u524d\u666f": [7.5, 8, 7.0, 7, 7, 7, 6, 8.0, 9, 6], "\u7ecf\u7406\u80fd\u529b": [7.5, 7, 6.5, 6, 7, 8, 6, 7.0, 7, 7], "\u6301\u4ed3\u7ed3\u6784": [7.5, 7.5, 7.0, 8, 7, 7, 6.5, 6.5, 7, 7], "\u98ce\u9669\u6536\u76ca\u6bd4": [7, 7, 7.5, 7, 7, 6, 7, 6.0, 5, 5], "\u6d41\u52a8\u6027": [9, 8, 9.0, 9, 9, 9, 9, 9.0, 9, 9]};
 new Chart(document.getElementById('barChart'), {
   type: 'bar',
-  data: {
-    labels: labels,
-    datasets: [{
-      label: '综合评分',
-      data: totals,
-      backgroundColor: totals.map(t => t >= 7.5 ? 'rgba(52,211,153,0.8)' : t >= 7.0 ? 'rgba(251,191,36,0.8)' : 'rgba(248,113,113,0.8)'),
-      borderColor: totals.map(t => t >= 7.5 ? '#34d399' : t >= 7.0 ? '#fbbf24' : '#f87171'),
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    indexAxis: 'y',
-    plugins: { legend: { display: false }, title: { display: true, text: 'Top 10 综合评分', color: '#e2e8f0' } },
-    scales: {
-      x: { min: 0, max: 10, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
-      y: { grid: { color: '#334155' }, ticks: { color: '#e2e8f0', font: { size: 11 } } }
-    }
-  }
+  data: { labels, datasets: [{ label: '综合评分', data: totals, backgroundColor: totals.map(t => t>=7.5?'rgba(52,211,153,0.8)':t>=7.0?'rgba(251,191,36,0.8)':'rgba(248,113,113,0.8)'), borderWidth: 1 }] },
+  options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false}, title:{display:true,text:'Top 10 综合评分',color:'#e2e8f0'} }, scales:{ x:{min:0,max:10,grid:{color:'#334155'},ticks:{color:'#94a3b8'}}, y:{grid:{color:'#334155'},ticks:{color:'#e2e8f0',font:{size:11}}} } }
 });
-
-// 六维雷达图（Top 5）
 new Chart(document.getElementById('radarChart'), {
   type: 'radar',
-  data: {
-    labels: dimNames,
-    datasets: [0,1,2,3,4].map(i => ({
-      label: labels[i],
-      data: dimNames.map(d => dimsData[d][i]),
-      borderColor: ['#60a5fa','#34d399','#fbbf24','#f87171','#c084fc'][i],
-      backgroundColor: ['rgba(96,165,250,0.15)','rgba(52,211,153,0.15)','rgba(251,191,36,0.15)','rgba(248,113,113,0.15)','rgba(192,132,252,0.15)'][i],
-      pointRadius: 2
-    }))
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: '#e2e8f0', font: { size: 10 } } }, title: { display: true, text: 'Top 5 六维评分雷达', color: '#e2e8f0' } },
-    scales: {
-      r: { min: 0, max: 10, grid: { color: '#334155' }, angleLines: { color: '#334155' }, pointLabels: { color: '#94a3b8' }, ticks: { backdropColor: 'transparent', color: '#64748b', stepSize: 2 } }
-    }
-  }
+  data: { labels: dimNames, datasets: [0,1,2,3,4].map(i => ({ label: labels[i], data: dimNames.map(d=>dimsData[d][i]), borderColor:['#60a5fa','#34d399','#fbbf24','#f87171','#c084fc'][i], backgroundColor:['rgba(96,165,250,0.15)','rgba(52,211,153,0.15)','rgba(251,191,36,0.15)','rgba(248,113,113,0.15)','rgba(192,132,252,0.15)'][i], pointRadius:2 })) },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{labels:{color:'#e2e8f0',font:{size:10}}}, title:{display:true,text:'Top 5 六维评分雷达',color:'#e2e8f0'} }, scales:{ r:{min:0,max:10,grid:{color:'#334155'},angleLines:{color:'#334155'},pointLabels:{color:'#94a3b8'},ticks:{backdropColor:'transparent',color:'#64748b',stepSize:2}} } }
 });
 </script>
 </body>
