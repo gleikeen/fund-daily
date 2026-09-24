@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>基金低估筛选报告 2026-09-24 盘前 · Multi-Agent</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1240px;margin:0 auto;padding:24px;background:#f5f6f8;color:#1f2937;line-height:1.6}
+header.top{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:28px 32px;border-radius:16px;margin-bottom:20px}
+header.top h1{margin:0 0 8px;font-size:26px}
+header.top .sub2{opacity:.92;font-size:14px}
+.pill{display:inline-block;background:rgba(255,255,255,.22);padding:3px 10px;border-radius:999px;font-size:13px;margin-right:8px}
+.card,.chart-card,.sec{background:#fff;padding:22px 24px;border-radius:14px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+h2{margin:0 0 16px;font-size:19px;border-left:4px solid #2563eb;padding-left:10px}
+h3{margin:0 0 6px;font-size:17px}
+h4{margin:0 0 8px;font-size:14px;color:#374151}
+.sub{color:#6b7280;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:7px 6px;text-align:center;border-bottom:1px solid #eef0f3;vertical-align:middle}
+th{background:#f0f4fa;color:#334155;font-weight:600;white-space:nowrap}
+td.hl{background:#fef9e7;font-weight:700;color:#b45309}
+.twrap{overflow-x:auto}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.mitem{background:#f8fafc;border:1px solid #e8edf3;border-radius:10px;padding:10px 12px}
+.mlabel{font-size:12px;color:#64748b}
+.mval{font-size:19px;font-weight:700;color:#0f172a}
+.mchg{font-size:12px}
+.mnote{font-size:12.5px;color:#374151;background:#f8fafc;border-left:3px solid #94a3b8;padding:12px 14px;border-radius:8px}
+.cov{font-size:12.5px;color:#374151;background:#f0f9ff;border-left:3px solid #0ea5e9;padding:12px 14px;border-radius:8px;margin-top:12px}
+.card-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px dashed #e5e7eb;padding-bottom:12px}
+.meta{font-size:12.5px;color:#4b5563;margin-top:3px}
+.scorebox{text-align:center;min-width:120px}
+.badge{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12.5px;color:#fff;margin-bottom:6px}
+.badge.buy{background:#dc2626}.badge.hold{background:#d97706}.badge.sell{background:#16a34a}
+.total{font-size:30px;font-weight:800;color:#0f172a;line-height:1.1}
+.totunit{font-size:13px;color:#94a3b8;font-weight:500}
+.totlabel{font-size:11.5px;color:#94a3b8}
+.sbp{background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:10px 14px;margin:14px 0;font-size:14px}
+.sbpv{font-weight:800;color:#b45309;font-size:15px}
+.dims{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.dim{background:#f8fafc;border:1px solid #e8edf3;border-radius:8px;padding:7px 8px;text-align:center}
+.dl{display:block;font-size:11.5px;color:#64748b}
+.dv{font-size:16px;font-weight:700;color:#1e40af}
+.trap{background:#fef2f2;border-left:3px solid #ef4444;color:#991b1b;font-size:12.5px;padding:9px 12px;border-radius:8px;margin-top:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+.two ul{margin:0;padding-left:18px;font-size:12.5px;color:#374151}
+.two li{margin-bottom:4px}
+.note{font-size:11.5px;color:#94a3b8;margin-top:12px}
+.concl{font-size:13px;color:#1f2937;background:#f8fafc;border-radius:8px;padding:12px 14px;margin-top:12px;border-left:3px solid #2563eb}
+.newface{background:#dcfce7;color:#15803d;font-size:11px;padding:2px 8px;border-radius:999px;vertical-align:middle}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.disclaimer{color:#6b7280;font-size:12.5px;padding:18px;border-top:1px solid #e5e7eb;margin-top:8px;background:#fff;border-radius:14px}
+@media(max-width:900px){.mgrid,.dims{grid-template-columns:repeat(2,1fr)}.chart-row,.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>基金低估筛选与多Agent分析报告</h1>
+  <div class="sub2">
+    <span class="pill">2026-09-24 盘前</span>
+    <span class="pill">Multi-Agent 独立分析</span>
+    <span class="pill">50+ 基金海选 Top10+备选</span>
+    <span class="pill">数据源 NeoData 金融数据服务</span>
+  </div>
+  <div class="sub2" style="margin-top:8px">生成时间：2026-09-24 08:10 ｜ 全市场板块全量枚举（申万31个一级行业+宽基+主题+港股/海外）→ PE/PB 分位事后过滤 → 每只基金独立 Agent 全量查询</div>
+</header>
+
+<div class="sec">
+  <h2>一、市场行情快照</h2>
+  
+<div class="mgrid">
+  <div class="mitem"><div class="mlabel">上证指数</div><div class="mval">3936.52</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-0.39%</span></div></div>
+  <div class="mitem"><div class="mlabel">深证成指</div><div class="mval">13636.07</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-0.64%</span></div></div>
+  <div class="mitem"><div class="mlabel">创业板指</div><div class="mval">3379.61</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-0.6%</span></div></div>
+  <div class="mitem"><div class="mlabel">北证50</div><div class="mval">—</div><div class="mchg"><span style="color:#dc2626;font-weight:600">+2.6%</span></div></div>
+  <div class="mitem"><div class="mlabel">恒生指数</div><div class="mval">24834.12</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-1.01%</span></div></div>
+  <div class="mitem"><div class="mlabel">恒生科技</div><div class="mval">4379.07</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-1.33%</span></div></div>
+  <div class="mitem"><div class="mlabel">道指</div><div class="mval">51511.59</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-0.68%</span></div></div>
+  <div class="mitem"><div class="mlabel">标普500</div><div class="mval">7706.03</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-0.75%</span></div></div>
+  <div class="mitem"><div class="mlabel">纳斯达克</div><div class="mval">26936.04</div><div class="mchg"><span style="color:#16a34a;font-weight:600">-1.13%</span></div></div>
+</div>
+<div class="mnote">
+  <b>A股（2026-09-23（周三） 收盘）：</b>三大指数缩量调整、权重与小票分化，上证指数 <b>3936.52</b>（-0.39%）、深证成指 13636.07（-0.64%）、创业板指 3379.61（-0.6%）；北证50 逆势 2.6%。三市成交 <b>1.78 万亿元</b>，沪深京三市成交 1.78 万亿元（沪深两市 1.76 万亿），较上一交易日大幅缩量 3705-3706 亿元，为近期最明显的一次缩量；可交易 A 股上涨 1890 只（占比 34.02%）/ 下跌 3564 只，全市场超 3500 只个股下跌；北证50 逆势 +2.60%，小票风格延续。<br>
+  强势：社会服务 +0.29%、电子 +0.19%、PCB/元件（澳弘电子9天7板、大亚圣象4连板）、PET铜箔（中一科技/胜利精密/江南新材/沃格光电涨停）、玻璃基板、培育钻石、生物制品/CRO（义翘神州/奥浦迈/益诺思涨超10%）、量子科技（天奥电子涨停）、房地产（盘中分化，我爱我家/华远控股/华丽家族3连板）<br>调整：传媒 -2.55%、商贸零售 -2.06%、煤炭开采加工（云煤能源触及跌停）、AI视频、影视院线（中视传媒跌停、中信出版跌超12%）、文化传媒、油气开采及服务（国际油价此前六连跌压制）<br>
+  <b>资金：</b>沪深两市主力资金全天净流出 321.27 亿元（其中沪深300 成份股 -157.04 亿、创业板 -88.77 亿、科创板 -24.56 亿；另有口径统计两市净流出约 227 亿、特大单净流出 147.18 亿）；净流入行业 7 个：房地产 +10.34 亿居首、食品饮料 +8.01 亿、建筑装饰、美容护理；净流出 24 个行业：通信 -56.71 亿、计算机 -50.57 亿、电子、医药生物、传媒<br>
+  <b>港股（2026-09-23（周三））：</b>恒指 <b>24834.12</b>（-1.01%）、恒生科技 4379.07（-1.33%）、国企指数 8273.81（-1.06%）。南向资金全天合计净买入 34.49 亿港元（沪市港股通 +44.23 亿、深市港股通 -9.75 亿），成交金额 821.39 亿港元；腾讯控股净买入 20.35 亿港元居首（个股跌 2.35%），盈富基金 +6.00 亿、小米集团-W +4.57 亿；建滔积层板净卖出 21.68 亿（个股涨 11.68%）、建滔集团 -3.36 亿、中芯国际 -3.31 亿<br>
+  <b>隔夜美股（2026-09-23（美东周三，北京时间 09-24 凌晨收盘））：</b>道指 51511.59（-0.68%）、标普500 7706.03（-0.75%）、纳指 26936.04（-1.13%%，止步四连涨）；费城半导体指数 -1.23%。<br>
+  <b>中概股：</b>纳斯达克中国金龙指数 -1.43% 报 5763.01：阿里巴巴 -4.74%、富途控股 -3.79%、百度 -2.87%、哔哩哔哩 -1.83%、小鹏集团 -1.81%、网易 -1.47%、拼多多 -1.43%、蔚来 -1.34%、京东 -0.80%、携程 -0.54%；贝壳 +1.28%、理想汽车 +0.34%、新东方 +2.48%<br>
+  <b>欧股：</b>欧洲三大股指 9/23 全线下跌：英国富时100 -0.03%（10705.26）、法国CAC40 -0.39%（8123.41）、德国DAX -0.66%（25410.63）<br>
+  <b>大宗商品：</b>WTI原油 92.16 美元/桶（+1.81%）｜布伦特 103.08 美元（+3.86%）｜现货黄金 4287.35 美元（-1.63%）｜现货白银 64.44 美元（-3.84%）<br>
+  <b>利率 / 美债：</b>美债10Y <b>5.0%</b>（10 年期美债收益率突破 5%；5 年期 2007 年以来首次破 5%，单日飙升近 20bp）；🔴 美债遭新一轮猛烈抛售：3 年、5 年、7 年、10 年期美债收益率均再次突破 5%，5 年期飙升近 20bp、自 2007 年以来首次突破 5%；美国财政部宣布周四将回购至多 60 亿美元长期国债
+</div>
+<div class="mnote" style="margin-top:10px"><b>港股盘面：</b>全日主板成交 1843.07 亿港元；软件、传媒盘中走强后回落，建材、有色金属、石化、银行、医药板块调整；智谱单日大跌 12.40% 但获南向净买入居首</div>
+<div class="mnote" style="margin-top:10px"><b>美股盘面：</b>纳指止步四连涨；大型科技股涨跌不一：Meta +1.02%、微软 +0.52%、特斯拉 +0.32%、苹果 -0.80%、英伟达 -1.47%、亚马逊 -2.24%、谷歌 -3.58%/-3.80%（口径差异）；半导体全线收跌：博通 -2.62%、AMD -1.47%、台积电 -1.16%、英特尔 -1.02%、高通 -0.52%、阿斯麦 -0.19%、ARM -0.19%；存储芯片多数下跌：闪迪 -3.73%、SK海力士 -3.12%、美光 -2.22%、西部数据 +1.96%、希捷 +0.44%；「大空头」迈克尔·伯里加码做空美光科技并警告周期逆转将引发剧烈抛售</div>
+<div class="mnote" style="margin-top:10px;border-left-color:#10b981"><b>多源互证：</b>
+  A股 — 沪指 3936.52 -0.39%、深成指 13636.07 -0.64%、创业板指 3379.61 -0.60% 经新华财经（新浪转载）、央广网财经、每日经济新闻 3 源互证，点位与涨跌幅完全一致；成交额 1.76 万亿（央广/每经「沪深两市」）与 1.78 万亿（新华财经「沪深京三市」）为统计口径差异，报告中并列标注<br>
+  港股 — 恒指 24834.12 -1.01%、恒生科技 4379.07 -1.33%、恒生中国企业 8273.81 -1.06% 经新华社（网易转载）、中国证券网（cnstock）、中新经纬 3 源互证；南向净买入 34.49 亿港元经证券时报·数据宝「沪市 +44.23 亿、深市 -9.75 亿」明细互证<br>
+  美股 — 道指 51511.59 -0.68%、纳指 26936.04 -1.13%、标普 7706.03 -0.75%、费半 -1.23%、金龙指数 5763.01 -1.43% 经中新经纬、腾讯新闻、大河财立方 3 源互证，点位与涨跌幅一致<br>
+  混年防御 — 🔴 本期检出混年数据并整条废弃：陆家嘴财经早餐 9/23 版块中「周二 A 股窄幅震荡，上证指数收涨 0.06% 报 3952.13 点 / 港股恒生指数收涨 0.18% 报 25087.75」实为 9/22（周二）数据，非 9/23；本期 A 股/港股快照一律采用 9/23（周三）收盘口径。另：谷歌跌幅存在 -3.58% 与 -3.80% 两口径、现货黄金存在 4287.35（-1.63%）与 4319.62（-0.89%）两口径，均取新华社/中新经纬收盘口径并在字段中注明。
+</div>
+
+</div>
+
+<div class="sec">
+  <h2>二、当日重要催化事件</h2>
+  <ul style="margin:0;padding-left:20px;font-size:13px"><li><b style="color:#dc2626">[重要] 国家主席习近平 9/23 下午抵达华盛顿，对美国进行国事访问</b><br><span class="sub">当地时间 9 月 23 日下午，习近平乘专机抵达美国首都华盛顿，特朗普到安德鲁斯空军基地迎接。彭丽媛、蔡奇、王毅等陪同出访。本周最高级别事件，市场关注关税、稀土、AI、能源等议题进展。</span></li><li><b style="color:#dc2626">[重要] 央行双管齐下呵护流动性：9/24 开展 8000 亿元 MLF + 9/28-10/8 隔夜逆回购每日不超 1 万亿</b><br><span class="sub">9 月 MLF 续做加量 2000 亿元，当月央行中期流动性操作合计加量 2000 亿元，连续第三个月保持净投放、规模较 8 月高 1000 亿元。跨节流动性安排明确，对银行、红利、地产链条构成支撑。</span></li><li><b style="color:#d97706">[关注] 美联储鹰派 + 美债收益率全线破 5%，10 月加息概率升至 71%</b><br><span class="sub">美联储理事巴尔表示通胀仍高于 2% 目标、可能需要进一步加息；美国 9 月标普全球制造业 PMI 57（52 个月新高）、服务业 PMI 58.7（59 个月新高）、综合 58.4；CME 显示交易员预计下月会议加息概率 71%。全球权益估值受压，压制成长/科技板块。</span></li><li><b style="color:#d97706">[关注] 全国性房贷贴息传闻四起（最高 100BP、首套利率降至 2%），地产股持续沸腾</b><br><span class="sub">有消息称将有全国性贴息政策落地（另有传闻总额度 1000 亿元、贴息 20BP、针对首套）；多个券商房地产行业分析师认为政策落地可能性不大。地产板块内部分化明显，短期情绪驱动为主。</span></li><li><b style="color:#d97706">[关注] 国新办 9/24 举行「开局起步『十五五』」系列发布会，介绍推进文化和旅游高质量发展</b><br><span class="sub">文旅部新闻发言人、副部长王建华出席。国庆文旅消费月已启动、发放超 3.1 亿元消费券；旅游/酒店/免税/传媒链条关注度提升。</span></li><li><b style="color:#2563eb">[留意] 工信部等发布《轻工纺织产业发展「十五五」规划》</b><br><span class="sub">力争到 2030 年规模以上企业营业收入突破 30 万亿元，加快智能化绿色化转型、推动人工智能赋能、实施「纺织+」行动。纺服板块边际催化。</span></li><li><b style="color:#2563eb">[留意] 「十五五」新一代通信网建设：适度超前、系统推进，推进低轨卫星互联网与算力设施扩容</b><br><span class="sub">工信部副部长余晓晖表示要坚持应用牵引、推进宽带网络向双万兆演进、统筹优化国际海陆网络布局、推动算力设施扩容提质、强化算网协同与算力互联。</span></li><li><b style="color:#2563eb">[留意] 国家数据局：将在十大行业开展数据资源开发利用攻坚行动</b><br><span class="sub">覆盖工业制造、医疗健康、金融服务、交通物流、现代农业、能源电力、文化旅游、教育、商贸流通、公共事业。数字经济/数据要素主题催化。</span></li><li><b style="color:#2563eb">[留意] 国际油价单日飙涨、黄金白银大跌</b><br><span class="sub">布伦特重上 103 美元、WTI 回升至 92.16；现货黄金跌至 4287.35（-1.63%）、白银 -3.84%。石化/能源链条受益，黄金股短期承压（512400 有色、518880 黄金 ETF 需关注）。</span></li><li><b style="color:#6b7280">[] 国庆中秋长假临近，跨节流动性安排落地</b><br><span class="sub">9/28-10/8 隔夜逆回购每日不超 1 万亿元；国内成品油 9/24 24 时开启新一轮调价窗口；今日有 1620 亿元 7 天期逆回购到期。节前缩量观望特征明显。</span></li><li><b style="color:#6b7280">[] 今日资本市场大事：粤芯半导体（301660）创业板上申购、百瑞吉（920201）北交所上市</b><br><span class="sub">《上海期货交易所不锈钢期货业务细则（修订版）》9/24 起实施；2026 词元出海创新发展大会开幕；乐奇 Rokid 新一代 AI 眼镜发布；首个大型具身智能主题乐园在横琴启幕。</span></li></ul>
+</div>
+
+<div class="sec">
+  <h2>三、海选说明：全量板块枚举（非关键词召回）</h2>
+  
+<div class="cov"><b>板块枚举覆盖：</b>已检查 66 个板块单元（申万31个一级行业 + 宽基 + 主题/赛道 + 港股/海外），冷门板块（影视/传媒/游戏/教育/旅游/环保/纺服/商贸/社服等）均在覆盖表内。<br>
+<b>其中 PE 低分位板块：</b>券商、白酒、食品饮料、医药生物、中药、港股互联网、中概互联、恒生科技、游戏、计算机(CS)、美容护理、能源金属<br>
+<b>本期新面孔：</b>—</div>
+
+  <div class="mnote"><b>新面孔槽位说明：</b>本期自然达标：Top10 含 3 只与上期（09-23）Top10 不重合的新面孔 —— 159792 港股通互联网ETF富国、513330 恒生互联网ETF华夏、512010 医药ETF易方达（上期为备选，未进 Top10）。无需强制补齐。</div>
+  <div class="mnote" style="margin-top:12px"><b>方法说明：</b>先枚举全市场板块字典 → 每个板块查一次估值 → 再把「PE 历史分位&lt;20%（或 PB 破净+高股息豁免）」作为<b>事后过滤条件</b>。检索条件 ≠ 过滤条件，避免"低估"关键词带来的召回死角。</div>
+</div>
+
+<div class="sec">
+  <h2>四、基金筛选对比表（14 只）</h2>
+  <div class="twrap">
+  <table>
+    <thead><tr>
+      <th>代码 / 名称</th><th>板块</th><th>PE</th><th>PE分位</th><th>PB</th><th>规模(亿)</th><th>股息率</th>
+      <th>YTD</th><th>近3年</th><th>近5年</th><th>最新价</th><th>净值</th><th>折溢价</th>
+      <th>建议买入价</th><th>总分</th><th>结论</th>
+    </tr></thead>
+    <tbody><tr><td><b>512880</b><br><span class="sub">证券ETF国泰</span></td><td>非银金融-证券</td><td>12.88</td><td>近10年约3%分位（PB 10年16%分位交叉验证）</td><td>1.42</td><td>599.45</td><td>约1.5%</td><td>-12.14%</td><td>+9.46%</td><td>-11.67%</td><td>1.065元（2026-09-23收盘）</td><td>1.0653元（2026-09-23，接口基金净值；单位净值口径1.07）</td><td>约-0.03%（场内价1.065 vs 净值1.0653，基本平价微幅折价，推算）</td><td class="hl"><b>1.033-1.097元（现价1.065，真低估可现价分批建仓）</b></td><td><b>7.73</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>513330</b><br><span class="sub">恒生互联网ETF华夏 🆕</span></td><td>港股互联网</td><td>20.0</td><td>近5年约12%分位（同赛道交叉验证）</td><td>2.0</td><td>246.96</td><td>约0.7%</td><td>-32.79%</td><td>-14.49%</td><td>-46.09%</td><td>0.347元（2026-09-23收盘价）</td><td>0.3482元（2026-09-23单位净值，披露0.35）</td><td>-0.34%（场内价格0.347低于净值0.3482，折价）</td><td class="hl"><b>0.337-0.357元（现价0.347，真低估可现价分批建仓）</b></td><td><b>7.65</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>512000</b><br><span class="sub">券商ETF华宝</span></td><td>非银金融-证券</td><td>12.88</td><td>近10年约3%分位（PB 10年16%分位交叉验证）</td><td>1.42</td><td>358.0</td><td>约1.4%</td><td>-12.07%</td><td>+9.25%</td><td>-11.78%</td><td>0.510元（2026-09-23收盘）</td><td>0.5094元（2026-09-23）</td><td>约+0.12%（0.510 vs 0.5094，贴近净值）</td><td class="hl"><b>0.495-0.525元（现价0.510，真低估可现价分批）</b></td><td><b>7.62</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>513180</b><br><span class="sub">恒生科技ETF华夏</span></td><td>港股科技</td><td>22.63</td><td>PE-TTM 23.10，近10年约35.22%分位（国元国际09-10）；近十年约13.7%分位（另一口径）</td><td>2.43</td><td>267.9</td><td>约1.0%</td><td>-24.70%</td><td>+2.12%</td><td>-30.06%</td><td>0.552元（2026-09-23收盘）</td><td>0.5534元</td><td>-0.25%（折价，贴近净值）</td><td class="hl"><b>0.535-0.569元（现价0.552，场内小幅折价-0.25%，接近真低估可现价分批建仓、并保留回调加仓空间）</b></td><td><b>7.51</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>159792</b><br><span class="sub">港股通互联网ETF富国 🆕</span></td><td>港股互联网</td><td>20.5</td><td>近5年约15%分位（同赛道中国互联网50 PE 16.49/2.8%分位交叉验证）</td><td>2.1</td><td>133.96</td><td>约0.8%</td><td>-35.87%</td><td>-11.26%</td><td>-45.46%</td><td>0.542元（2026-09-23收盘，深市）</td><td>0.5467元（2026-09-23）</td><td>折价约0.86%（收盘价0.542 vs 净值0.5467，计算值；接口未直接返回折溢价率）</td><td class="hl"><b>0.526-0.558元（现价0.542，真低估可现价分批）</b></td><td><b>7.32</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>512010</b><br><span class="sub">医药ETF易方达 🆕</span></td><td>医药生物</td><td>30.1</td><td>PE(TTM)约30.1倍，近10年约22%分位（华宝09-18）；医药生物PB 10年13.9%分位</td><td>3.0</td><td>120.0</td><td>约1.2%</td><td>+1.40%</td><td>-8.40%</td><td>-43.35%</td><td>0.384元（2026-09-23）</td><td>0.3839元（2026-09-23）</td><td>+0.03%（场内价0.384 vs 净值0.3839，基本平价）</td><td class="hl"><b>0.365-0.375元（现价0.384，偏低估建议回调3%-5%分批建仓）</b></td><td><b>7.28</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>513130</b><br><span class="sub">恒生科技ETF华泰柏瑞</span></td><td>港股科技</td><td>22.63</td><td>近10年约35.22%分位；近十年13.7%分位（另一口径）</td><td>2.43</td><td>190.0</td><td>约0.9%</td><td>-24.45%</td><td>+0.98%</td><td>-31.22%</td><td>0.542元（2026-09-23 沪市收盘）</td><td>0.5437元（2026-09-23）</td><td>-0.31%（场内折价，0.542 vs 0.5437）</td><td class="hl"><b>0.526-0.558元（现价0.542，真低估可现价分批）</b></td><td><b>7.21</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>513050</b><br><span class="sub">中概互联网ETF易方达</span></td><td>中概互联</td><td>16.49</td><td>PE 16.49，近5年约2.8%分位；PB 0.7%分位</td><td>1.95</td><td>390.84</td><td>约0.9%</td><td>-28.19%</td><td>+7.51%</td><td>-23.62%</td><td>1.030元（2026-09-23场内收盘价）</td><td>1.0588元（2026-09-23实时估算净值；2026-09-22官方单位净值1.06）</td><td>-2.72%（场内折价）</td><td class="hl"><b>1.00-1.06元（现价1.030，净值1.0588，场内折价约2.7%，真低估可现价分批建仓）</b></td><td><b>7.18</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>510880</b><br><span class="sub">红利ETF华泰柏瑞</span></td><td>红利/银行</td><td>8.2</td><td>PE近10年约60%分位；PB 0.8倍破净</td><td>0.8</td><td>180.0</td><td>约4.27%</td><td>+10.32%</td><td>+23.78%</td><td>+27.12%</td><td>3.350元（2026-09-23收盘，查询1接口真实返回）</td><td>3.3534元（2026-09-23，查询1行情表净值列）</td><td>-0.10%（轻微折价，由场内价3.350与净值3.3534计算；接口未直接返回溢价率）</td><td class="hl"><b>3.25-3.45元（现价3.350元，真低估可现价分批建仓）</b></td><td><b>7.18</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>512890</b><br><span class="sub">红利低波ETF华泰柏瑞</span></td><td>红利/银行</td><td>8.5</td><td>PB 0.8倍（破净）处历史低位；PE近10年约55%分位</td><td>0.8</td><td>216.0</td><td>约4.26%</td><td>+0.53%</td><td>+23.17%</td><td>+36.37%</td><td>1.182元（2026-09-23收盘）</td><td>1.1807元（2026-09-23，接口返回1.18）</td><td>+0.11%</td><td class="hl"><b>1.12-1.15元（现价1.182，偏低估，建议现价下方3-5%等回调分批建仓）</b></td><td><b>7.12</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>159869</b><br><span class="sub">游戏ETF华夏</span></td><td>传媒-游戏（冷门板块）</td><td>23.22</td><td>近5年约0.58%分位（09-15）/近1年约20%分位（09-22）</td><td>3.5</td><td>90.0</td><td>约0.6%</td><td>-25.62%</td><td>-0.52%</td><td>+16.05%</td><td>1.070元（2026-09-23场内收盘）</td><td>1.070元（2026-09-23单位净值）</td><td>≈0.00%（1.070 vs 净值1.0700；接口未直接返回溢价率字段，由真实价/净值推算）</td><td class="hl"><b>1.02-1.07元（现价1.070元，偏低估等回调，可现价轻仓+回调至1.02-1.04分批加仓）</b></td><td><b>7.12</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>159928</b><br><span class="sub">消费ETF汇添富</span></td><td>消费</td><td>20.0</td><td>中证消费PE约21.0%分位（昆仑侠09-11）</td><td>4.0</td><td>100.0</td><td>约2.5%</td><td>-17.17%</td><td>-29.63%</td><td>-36.68%</td><td>0.656元（2026-09-23收盘，-0.30%）</td><td>0.6562元（2026-09-23接口返回，单位净值0.66）</td><td>-0.03%（现价0.656 vs 净值0.6562，基本贴近净值）</td><td class="hl"><b>0.636-0.676元（现价0.656，估值处历史中低位且贴近净值，可现价分批建仓；跌破0.640元可加大分批力度）</b></td><td><b>7.02</b></td><td style="color:#dc2626;font-weight:600">建议买入</td></tr><tr><td><b>512690</b><br><span class="sub">酒ETF鹏华</span></td><td>食品饮料-白酒</td><td>19.52</td><td>PE 19.52，近10年约13.67%分位；PB 3.91/1.5%分位（雪球09-18）</td><td>3.91</td><td>110.0</td><td>约4.70%（白酒ROE 24.5%全行业最高）</td><td>-22.52%</td><td>-48.18%</td><td>-50.71%</td><td>0.415元（2026-09-23，场内收盘价）</td><td>0.42元（精确0.4153元，2026-09-23，单位净值）</td><td>约-0.07%（轻微折价，现价0.415/净值0.4153，2026-09-23）</td><td class="hl"><b>0.403-0.427元（现价0.415，真低估可现价分批建仓；场内轻微折价约-0.07%，可贴近净值）</b></td><td><b>6.89</b></td><td style="color:#d97706;font-weight:600">谨慎买入</td></tr><tr><td><b>512400</b><br><span class="sub">有色金属ETF南方</span></td><td>有色金属</td><td>20.0</td><td>PE近1年约20%分位</td><td>3.0</td><td>200.0</td><td>约1.1%</td><td>-6.92%</td><td>+81.82%</td><td>+18.57%</td><td>1.717元（2026-09-23，昨收1.733）</td><td>1.72元（2026-09-23）</td><td>约-0.05%~-0.17%（微折价/平价，场内价1.717 vs 净值1.7178）</td><td class="hl"><b>1.48-1.58元（现价1.717，周期中后段需回调8-15%，严格等回调后分批建仓）</b></td><td><b>6.42</b></td><td style="color:#d97706;font-weight:600">谨慎买入</td></tr></tbody>
+  </table>
+  </div>
+  <div class="note">数据来源：NeoData 金融数据服务（每只基金独立 Agent 全量查询，原始输出落盘 raw/ 与 MD 证据）。🆕 = 与上期名单不重合的新面孔基金。</div>
+</div>
+
+<div class="sec">
+  <h2>五、Multi-Agent 六维评分总览（每维满分10分，权重 20/20/12/13/25/10）</h2>
+  <div class="twrap">
+  <table>
+    <thead><tr><th>基金</th><th>估值水平<br><span class="sub">20</span></th><th>行业前景<br><span class="sub">20</span></th><th>经理能力<br><span class="sub">12</span></th><th>持仓结构<br><span class="sub">13</span></th><th>风险收益比<br><span class="sub">25</span></th><th>流动性<br><span class="sub">10</span></th><th>综合<br>(0-10)</th></tr></thead>
+    <tbody><tr><td><b>512880</b> <span class="sub">证券ETF国泰</span></td><td>8.5</td><td>7.5</td><td>7.0</td><td>7.0</td><td>7.5</td><td>9.0</td><td class="hl"><b>7.73</b></td></tr><tr><td><b>513330</b> <span class="sub">恒生互联网ETF华夏</span></td><td>8.5</td><td>8</td><td>6</td><td>7.5</td><td>7</td><td>9</td><td class="hl"><b>7.65</b></td></tr><tr><td><b>512000</b> <span class="sub">券商ETF华宝</span></td><td>9.0</td><td>8.0</td><td>6.0</td><td>7.5</td><td>6.5</td><td>9.0</td><td class="hl"><b>7.62</b></td></tr><tr><td><b>513180</b> <span class="sub">恒生科技ETF华夏</span></td><td>8.0</td><td>7.5</td><td>7.0</td><td>7.5</td><td>7.0</td><td>8.5</td><td class="hl"><b>7.51</b></td></tr><tr><td><b>159792</b> <span class="sub">港股通互联网ETF富国</span></td><td>8.5</td><td>7.0</td><td>6.0</td><td>7.5</td><td>6.5</td><td>9.0</td><td class="hl"><b>7.32</b></td></tr><tr><td><b>512010</b> <span class="sub">医药ETF易方达</span></td><td>7.0</td><td>8.0</td><td>7.0</td><td>7.0</td><td>6.5</td><td>9.0</td><td class="hl"><b>7.28</b></td></tr><tr><td><b>513130</b> <span class="sub">恒生科技ETF华泰柏瑞</span></td><td>8.5</td><td>7</td><td>7</td><td>6.5</td><td>6.5</td><td>8</td><td class="hl"><b>7.21</b></td></tr><tr><td><b>513050</b> <span class="sub">中概互联网ETF易方达</span></td><td>8.0</td><td>6.5</td><td>6.5</td><td>7.5</td><td>6.5</td><td>9.0</td><td class="hl"><b>7.18</b></td></tr><tr><td><b>510880</b> <span class="sub">红利ETF华泰柏瑞</span></td><td>8.0</td><td>6.5</td><td>6.5</td><td>6.5</td><td>7.0</td><td>9.0</td><td class="hl"><b>7.18</b></td></tr><tr><td><b>512890</b> <span class="sub">红利低波ETF华泰柏瑞</span></td><td>7.0</td><td>7.5</td><td>6.5</td><td>7.0</td><td>6.5</td><td>9.0</td><td class="hl"><b>7.12</b></td></tr><tr><td><b>159869</b> <span class="sub">游戏ETF华夏</span></td><td>7.5</td><td>7.5</td><td>6.5</td><td>7.0</td><td>6.5</td><td>8.0</td><td class="hl"><b>7.12</b></td></tr><tr><td><b>159928</b> <span class="sub">消费ETF汇添富</span></td><td>8.0</td><td>6.5</td><td>6.0</td><td>6.5</td><td>7.0</td><td>8.0</td><td class="hl"><b>7.02</b></td></tr><tr><td><b>512690</b> <span class="sub">酒ETF鹏华</span></td><td>8.5</td><td>5.5</td><td>6.0</td><td>6.5</td><td>6.5</td><td>9.0</td><td class="hl"><b>6.89</b></td></tr><tr><td><b>512400</b> <span class="sub">有色金属ETF南方</span></td><td>5.0</td><td>7.5</td><td>6.5</td><td>7.0</td><td>5.5</td><td>8.5</td><td class="hl"><b>6.42</b></td></tr></tbody>
+  </table>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card"><h2>综合评分排序</h2><canvas id="totalChart" height="240"></canvas></div>
+  <div class="chart-card"><h2>六维评分雷达（Top3）</h2><canvas id="radarChart" height="240"></canvas></div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card"><h2>最新价 vs 建议买入价</h2><canvas id="priceChart" height="240"></canvas></div>
+  <div class="chart-card"><h2>折溢价率（现价 vs 净值）</h2><canvas id="premiumChart" height="240"></canvas></div>
+</div>
+
+<div class="chart-card"><h2>长期涨幅：近3年 / 近5年</h2><canvas id="longChart" height="200"></canvas></div>
+
+<div class="sec">
+  <h2>六、每只基金详细分析（独立 Agent）</h2>
+  
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>512880 · 证券ETF国泰</h3>
+      <div class="meta">板块：非银金融-证券 ｜ 跟踪：中证全指证券公司指数 ｜ 规模：599.45 亿 ｜ 基金经理：艾小军</div>
+      <div class="meta">最新价：<b>1.065元（2026-09-23收盘）</b> ｜ 净值：<b>1.0653元（2026-09-23，接口基金净值；单位净值口径1.07）</b> ｜ 折溢价：约-0.03%（场内价1.065 vs 净值1.0653，基本平价微幅折价，推算） ｜ YTD：-12.14% ｜ 近3年：+9.46% ｜ 近5年：-11.67%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.73<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">1.033-1.097元（现价1.065，真低估可现价分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.5</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：不构成估值陷阱：YTD -12.14%（未超30%）、溢价率约-0.03%（远低于5%）、近3年+9.46%未超100%。指数PE(TTM)12.30、PB(LF)1.2471处近十年低分位（研报口径9/11板块PB处6.3%分位）；近5年-11.67%为负属跌出来的机会。注意低PE部分由2026H1券商业绩同比+48.7%的盈利抬升贡献，属盈利抬升型低估；资金流近期数据缺失，无法确认持续流入。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>指数PE(TTM)12.30、PB(LF)1.2471处近十年低分位，股息率2.08%，估值安全边际高</li><li>政策强催化：十五五金融强国规划、证券公司监管条例有望近期出台、中长期资金年内净买入A股超6000亿</li><li>H1上市券商合计归母净利1672.2亿元、同比+48.7%，业绩高景气</li><li>规模599.62亿元、成交活跃，流动性极佳，溢价率约-0.03%无溢价风险</li><li>基金YTD -12.14%、近5年-11.67%，位置低、弹性大（近2年+30.63%）</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>行业高度集中于非银金融-证券单一赛道，无分散，β波动大</li><li>低PE部分源于2026H1业绩高增的盈利抬升，若行情转弱业绩回落估值低点会抬升</li><li>市场交投环比回落（日均成交额-3.90%），压制券商业绩弹性；板块短期仍处调整</li><li>近期资金流向数据接口未返回，无法确认资金持续流入</li><li>基金经理信息接口未返回，管理人维度无法核实</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">证券ETF国泰（512880）跟踪中证全指证券公司指数，当前处于低估值（PE 12.30/PB 1.2471，近十年低分位）+ 政策强催化 + 高流动性组合；基金YTD -12.14%、近5年-11.67%属跌出来的机会，场内基本平价（溢价率约-0.03%），599.62亿元规模流动性极佳，适合作为券商板块β配置工具。风险为行业单一集中、β波动大、近期资金流数据缺失。六维加权总分7.73，给出‘建议买入’。建议买入价：1.033-1.097元（现价1.065，真低估可现价分批建仓）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>513330 · 恒生互联网ETF华夏 <span class="newface">🆕 新面孔</span></h3>
+      <div class="meta">板块：港股互联网 ｜ 跟踪：恒生互联网科技业指数 ｜ 规模：246.96 亿 ｜ 基金经理：徐猛</div>
+      <div class="meta">最新价：<b>0.347元（2026-09-23收盘价）</b> ｜ 净值：<b>0.3482元（2026-09-23单位净值，披露0.35）</b> ｜ 折溢价：-0.34%（场内价格0.347低于净值0.3482，折价） ｜ YTD：-32.79% ｜ 近3年：-14.49% ｜ 近5年：-46.09%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.65<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.337-0.357元（现价0.347，真低估可现价分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.5</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">8</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">7</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：YTD -32.79%为深度下跌而非&gt;30%的盈利暴增型；场内折价0.34%无溢价风险；无大幅资金流出；近3年-14.49%、近5年-46.09%均为负属&#x27;跌出来的机会&#x27;。数据缺口：跟踪指数PE/PB分位接口未返回（用同业中证港股通互联网PE-TTM 20.84倍/近10年10.44%分位参考）、基金经理信息缺失。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>YTD-32.79%、近1年-40.38%、近5年-46.09%，处于历史深度低估区间</li><li>板块估值参考中证港股通互联网指数PE-TTM约20.84倍、近10年10.44%分位，处历史低位</li><li>AI叙事转向中国应用端+云栖大会等行业催化，南向资金7月净买入628.7亿港元并持续净流入</li><li>场内小幅折价0.34%无溢价风险，规模261.27亿、份额750.33亿份，流动性充裕</li><li>重仓腾讯、阿里、网易、美团、小米等港股互联网龙头，质地优良</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>近1年-40.38%、近5年-46.09%、成立以来-65.18%，长期趋势仍弱，抄底存在继续下跌风险</li><li>单一行业（港股互联网）高度集中，波动大</li><li>港股受外资流动、汇率、地缘政治影响显著</li><li>接口未返回跟踪指数PE/PB分位与基金经理信息，评分存在数据缺口</li><li>资金流数据仅覆盖2026-07-13~17且为小幅净赎回，缺近5日主力资金数据</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">恒生互联网ETF华夏（513330）跟踪港股互联网科技龙头，当前处历史深度低估区间（YTD-32.79%、近5年-46.09%，板块PE近10年约10.44%分位），叠加AI应用端重估、南向资金持续净流入与政策支持，中长期修复弹性较大；场内小幅折价、无溢价风险，规模与流动性充裕。主要风险为长期趋势偏弱、单一行业集中度高。六维加权总分7.65，建议买入，现价分批建仓并控制单一行业敞口。建议买入价：0.337-0.357元（现价0.347，真低估可现价分批建仓）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>512000 · 券商ETF华宝</h3>
+      <div class="meta">板块：非银金融-证券 ｜ 跟踪：中证全指证券公司指数 ｜ 规模：358.0 亿 ｜ 基金经理：丰晨成</div>
+      <div class="meta">最新价：<b>0.510元（2026-09-23收盘）</b> ｜ 净值：<b>0.5094元（2026-09-23）</b> ｜ 折溢价：约+0.12%（0.510 vs 0.5094，贴近净值） ｜ YTD：-12.07% ｜ 近3年：+9.25% ｜ 近5年：-11.78%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.62<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.495-0.525元（现价0.510，真低估可现价分批）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">9.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">8.0</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：非估值陷阱：YTD -12.07%（远低于30%超涨线）、溢价率约+0.12%（&lt;5%）、PE 12.30处于近十年较低分位。但近5年为负(-11.78%)且近期份额持续净赎回，需关注短期资金流出与行业景气兑现节奏。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>指数PE(TTM)12.30、PB(LF)1.25、股息率2.08%，处于近十年较低分位，估值安全边际厚</li><li>「十五五」金融强国规划落地+新国九条推进，券商投行/财富管理/并购重组/国际化四大赛道增量明确</li><li>中长期资金持续入市（社保年金保险今年净买入A股超6000亿），上市券商业绩同比高增、行业维持高景气</li><li>基金规模362.11亿元，二级市场流动性极佳，溢价率仅约+0.12%，可贴近净值买入</li><li>十大重仓均为证券龙头，持仓透明、β属性纯粹，适合作为券商板块配置工具</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>基金份额近两周由约725.8亿份降至710.9亿份，持续净赎回、资金净流出，短期资金面偏弱</li><li>板块年初以来累计下跌13.72%，上周非银金融跑输沪深300 3.78pct，市场情绪偏弱</li><li>券商行业β高、波动大，近1年-12.14%、近3月-5.82%，单日跌幅曾超3%</li><li>短期市场交投活跃度回落（上周日均成交1.89万亿，环比-3.9%），业绩弹性依赖行情回暖</li><li>基金经理信息接口未返回，管理人层面无法进一步核实</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">券商ETF华宝（512000）PE(TTM)12.30、PB1.25处于近十年较低分位，YTD-12.07%、近5年-11.78%，属跌出来的真低估机会；政策端「十五五」金融强国规划与新国九条为券商四大赛道打开明确增量空间，中长期景气向好，短期受交投回落与资金净流出压制。综合六维评分7.62分，建议逢低分批中长期布局。建议买入价：0.495-0.525元（现价0.510，真低估可现价分批建仓）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>513180 · 恒生科技ETF华夏</h3>
+      <div class="meta">板块：港股科技 ｜ 跟踪：恒生科技指数 ｜ 规模：267.9 亿 ｜ 基金经理：徐猛</div>
+      <div class="meta">最新价：<b>0.552元（2026-09-23收盘）</b> ｜ 净值：<b>0.5534元</b> ｜ 折溢价：-0.25%（折价，贴近净值） ｜ YTD：-24.70% ｜ 近3年：+2.12% ｜ 近5年：-30.06%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.51<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.535-0.569元（现价0.552，场内小幅折价-0.25%，接近真低估可现价分批建仓、并保留回调加仓空间）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">8.5</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：YTD -24.70%未超30%，场内折价0.25%无溢价风险，无资金持续净流出（份额稳定、近期同类ETF净申购居首），故不构成估值陷阱；唯一保留项为近1年-33.61%、近5年-30.06%仍处下行趋势，且恒生科技指数PE历史分位数接口未直接返回（仅返回PE(TTM)22.21倍、PB2.48倍，截至2026-07-17），无法严格验证『PE分位&lt;20%』，故估值维度未给满分级。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>YTD-24.70%、近1年-33.61%，深度回撤后估值安全边际充足</li><li>恒生科技指数PE(TTM)22.21倍、PB2.48倍，处历史中低位</li><li>场内折价0.25%，贴近净值买入，无溢价追高风险</li><li>恒生科技挂钩ETF近一周净申购超31亿元，居全市场跨境类第一</li><li>香港五年规划与2026施政报告支持AI/6G/金融创新与ETF互联互通</li><li>规模约394亿元、日成交额12~24亿元，流动性优秀</li><li>十大重仓聚集腾讯/阿里/美团/小米/中芯国际等科技龙头</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>近1年-33.61%、近5年-30.06%，中期趋势仍偏弱，短期或继续磨底</li><li>美联储9月加息25bp至3.75%-4.00%，港元利率上行压制港股估值</li><li>恒生科技指数PE历史分位数接口未返回，低估程度无法严格量化</li><li>2026-07-15曾现单个交易日1.76亿份净赎回，资金面存在波动</li><li>港股受地缘政治与外资流动性影响较大，波动高于A股</li><li>成立以来累计-44.67%，长期持有体验较差</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">恒生科技ETF华夏（513180）跟踪恒生科技指数，规模约394亿元、流动性充裕。当前估值处深度回撤后的中低位（YTD-24.70%、近1年-33.61%、近5年-30.06%），场内折价0.25%无溢价风险；政策端与AI产业景气提供中期催化，短期受美联储加息及港股流动性扰动。六维加权 total≈7.51，建议买入：以现价分批建仓+长期定投，建议买入价 0.535-0.569元（现价0.552），并可保留回调加仓空间。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>159792 · 港股通互联网ETF富国 <span class="newface">🆕 新面孔</span></h3>
+      <div class="meta">板块：港股互联网 ｜ 跟踪：中证港股通互联网指数 ｜ 规模：133.96 亿 ｜ 基金经理：田希蒙</div>
+      <div class="meta">最新价：<b>0.542元（2026-09-23收盘，深市）</b> ｜ 净值：<b>0.5467元（2026-09-23）</b> ｜ 折溢价：折价约0.86%（收盘价0.542 vs 净值0.5467，计算值；接口未直接返回折溢价率） ｜ YTD：-35.87% ｜ 近3年：-11.26% ｜ 近5年：-45.46%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.32<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.526-0.558元（现价0.542，真低估可现价分批）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.5</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：非估值陷阱、属&#x27;跌出来&#x27;的机会：YTD -35.87%（远未超涨，未触发YTD&gt;30%口径）、场内折价0.86%（无溢价&gt;5%风险）、近3年-11.26%与近5年-45.46%均为负；但存在两项负面与两项缺失——负面：近1月-9.05%趋势未止跌、份额持续净赎回致资金净流出；缺失：接口未返回PE/PB历史分位（仅可横向对比2023-12-29 PB 2.94→当前2.15，约-27%）、未返回基金经理信息。另净值长期大幅下跌与指数PE/PB稳定、指数总市值上升之间存在数据背离，需警惕数据一致性风险。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>指数PEPB处近年偏低区域：PB(LF)2.15较2023-12-29的2.94下降约27%，PE(TTM)20.56基本持平</li><li>YTD-35.87%、近1年-47.02%，深度回撤后估值安全边际较足，属&#x27;跌出来&#x27;的机会</li><li>行业催化偏正面：AI叙事转向中国应用端、工信部信息通信&#x27;十五五&#x27;规划、互联网扩大开放</li><li>南向资金单周净流入74亿港元，港股互联网板块9月下旬企稳反弹、龙头股表现强劲</li><li>流动性极佳：规模约338.67亿元、日成交额约13.96亿元、换手率4.21%，无溢价风险（折价0.86%）</li><li>持仓为腾讯、阿里、美团、小米、快手等高纯度港股互联网龙头，主题暴露直接</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>短期趋势未止跌：近1月-9.05%、近6月-20.60%、近3月仅+0.72%，趋势确认前波动大</li><li>资金持续净流出：份额由2026-09-09的624.37亿份降至09-22的608.57亿份，净赎回约15.8亿份（-2.53%）</li><li>数据缺失：接口未返回PE/PB历史分位与基金经理信息，估值判断缺少分位量化支撑</li><li>数据一致性存疑：基金净值长期大幅下跌与指数PE/PB相对稳定、指数总市值上升之间存在背离</li><li>指数30只成分股中5只亏损，AI商业化兑现节奏与平台经济监管仍具不确定性</li><li>接口未返回持仓权重与报告期，实际个股集中度无法核验</li><li>场内基金净申购数据仅更新至2026-07-17，资金流信息滞后</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">159792跟踪中证港股通互联网指数，是港股AI应用与平台经济龙头的高纯度、大流动性暴露工具。估值端YTD-35.87%、近1年-47.02%、近5年-45.46%，指数PB 2.15显著低于2023年末的2.94，处于真低估区域（跌出来的机会）；行业端AI叙事转向中国应用端、&#x27;十五五&#x27;信息通信规划、互联网扩大开放与南向资金净流入提供催化；持仓端腾讯、阿里、美团、小米、快手等龙头高度集中，主题锐度高但波动大。主要风险是短期趋势未止跌（近1月-9.05%）与份额持续净赎回导致资金净流出，另有基金经理与PE/PB历史分位字段缺失、净值与指数估值存在数据背离。六维加权（估值20/行业20/经理12/持仓13/风险收益比25/流动性10）总分为7.32，落入&#x27;建议买入&#x27;区间。建议买入价0.526-0.558元（现价0.542，真低估可现价分批），即现价±3%区间内分批建仓，逢回调至区间下沿加大力度，不建议一次性满仓。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>512010 · 医药ETF易方达 <span class="newface">🆕 新面孔</span></h3>
+      <div class="meta">板块：医药生物 ｜ 跟踪：沪深300医药卫生指数 ｜ 规模：120.0 亿 ｜ 基金经理：余海燕</div>
+      <div class="meta">最新价：<b>0.384元（2026-09-23）</b> ｜ 净值：<b>0.3839元（2026-09-23）</b> ｜ 折溢价：+0.03%（场内价0.384 vs 净值0.3839，基本平价） ｜ YTD：+1.40% ｜ 近3年：-8.40% ｜ 近5年：-43.35%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.28<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.365-0.375元（现价0.384，偏低估建议回调3%-5%分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">8.0</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：YTD仅+1.40%（&lt;20%阈值），近3年-8.40%、近5年-43.35%长期深度下跌，非涨出来的陷阱；场内溢价率约+0.03%无溢价风险；但跟踪指数PE(TTM)32.76倍绝对水平不低（成分股盈利收缩推升PE，PB由2023年3.95降至3.36，剔除负值PE 23.29低于2023年26.98），且在盈利下行背景下需警惕盈利继续走弱导致估值缺乏安全垫；近5日资金净流出约7.55亿份为负面信号。PE/PB历史分位接口多次重试均返回&#x27;--&#x27;，无法取得确切分位，故按偏低估处理。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>9/18十部门《医药工业发展&#x27;十五五&#x27;规划》将生物医药确立为国家新兴支柱产业，2030年创新药产业CAGR≥20%、FIC占全球≥25%</li><li>创新药出海高景气：今年以来对外授权总额突破1200亿美元（同比+36%），中国占全球比例接近50%</li><li>2026H1医药行业扣非净利同比+17.4%，CXO板块扣非净利+64.6%，盈利质量改善</li><li>跟踪指数PB(LF)由2023年3.95降至3.36，估值中枢下移；YTD仅+1.40%，低位修复空间</li><li>规模150.5亿元、日成交额约3亿元，流动性优秀；溢价率约+0.03%，无溢价风险</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>跟踪指数成分股仅19只、集中度高，单一个股波动放大净值波动</li><li>指数PE(TTM)32.76倍绝对水平不低，成分股盈利收缩推升PE，若盈利继续走弱则估值缺乏安全垫</li><li>近5日场内资金净流出约7.55亿份（9/21单日-6.35亿份），资金面偏弱</li><li>近1年回报-11.11%、近5年-43.35%，长期仍处熊市，修复节奏存在不确定性</li><li>板块内部严重分化，本指数弹性弱于纯创新药/CXO主题；PE/PB历史分位数据缺失，估值判断置信度受限</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">医药ETF易方达（512010）当前场内价0.384元、净值0.3839元基本平价，YTD仅+1.40%明显落后于创新药/CXO主题，属大市值综合医药低位修复标的。政策端《医药工业发展&#x27;十五五&#x27;规划》确立生物医药为新兴支柱产业，叠加创新药出海超1200亿美元、H1行业扣非净利+17.4%，行业前景明确；跟踪指数PB由3.95降至3.36、剔除负值PE 23.29低于2023年同期，估值中枢下移，判定偏低估。风险在于成分股仅19只集中度高、PE(TTM)32.76倍绝对水平不低、近5日资金净流出约7.55亿份、近1年仍-11.11%。综合评分7.28（≥7.0）给出建议买入。建议买入价0.365-0.375元（现价0.384元，回调3%-5%分批建仓，不追高）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>513130 · 恒生科技ETF华泰柏瑞</h3>
+      <div class="meta">板块：港股科技 ｜ 跟踪：恒生科技指数 ｜ 规模：190.0 亿 ｜ 基金经理：何琦</div>
+      <div class="meta">最新价：<b>0.542元（2026-09-23 沪市收盘）</b> ｜ 净值：<b>0.5437元（2026-09-23）</b> ｜ 折溢价：-0.31%（场内折价，0.542 vs 0.5437） ｜ YTD：-24.45% ｜ 近3年：+0.98% ｜ 近5年：-31.22%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.21<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.526-0.558元（现价0.542，真低估可现价分批）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.5</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">7</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">8</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：非估值陷阱。YTD -24.45% 大幅为负、指数4379点处多年低位，不属超涨；场内折价约0.31%（无溢价风险）；资金以净流入为主。局限：接口未返回指数PE/PB历史分位，指数PE(TTM)22.96偏高因30只成分股中9只亏损，剔除负值口径PE约17.64更合理；基金十大重仓明细、基金经理任职回报亦未返回。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>指数4379点处多年低位，剔除负值PE约17.64倍、PB2.29倍，估值进入合理偏低区间</li><li>基金YTD-24.45%、近5年-31.22%，属跌出来的机会（估值维度+0.5修正）</li><li>场内折价约0.31%，同份额买入成本更低，无溢价风险</li><li>9月上半月份额以净申购为主（约+40亿份），近一周恒生科技挂钩ETF净申购超31亿元居跨境类第一</li><li>香港五年规划/施政报告布局AI、商业航天、6G、AI金融，并拟扩大ETF互联互通、取消强积金投资指数ETF上限</li><li>规模330.39亿元头部跨境ETF，成交活跃、流动性优良</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>美联储2026-09-17加息25bp（3.75%-4.00%）、香港金管局同步升至4.25%，利率上行压制港股科技估值</li><li>近1年-33.53%、成立以来-45.63%，历史波动与回撤大</li><li>恒生科技指数30只成分股中9只亏损（占30%），盈利兑现存在不确定性</li><li>近1月仍-8.79%，短期趋势偏弱，右侧确认前或继续磨底</li><li>指数PE/PB历史分位、基金十大重仓明细、基金经理任职回报三项接口未返回，存在信息盲区</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">恒生科技ETF华泰柏瑞（513130）跟踪恒生科技指数，当前指数处多年低位、基金YTD-24.45%深度回调，剔除负值PE约17.64倍/PB2.29倍已进入合理偏低区间；场内轻微折价0.31%，9月份额以净申购为主，叠加香港AI/科技政策与南向资金流入的中长期利好，具备低位分批配置价值；风险为加息周期、9只亏损成分股盈利不确定及短期趋势偏弱。六维加权7.21分，建议买入。建议买入价0.526-0.558元（现价0.542，真低估可现价分批）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>513050 · 中概互联网ETF易方达</h3>
+      <div class="meta">板块：中概互联 ｜ 跟踪：中证海外中国互联网50 ｜ 规模：390.84 亿 ｜ 基金经理：余海燕/范冰</div>
+      <div class="meta">最新价：<b>1.030元（2026-09-23场内收盘价）</b> ｜ 净值：<b>1.0588元（2026-09-23实时估算净值；2026-09-22官方单位净值1.06）</b> ｜ 折溢价：-2.72%（场内折价） ｜ YTD：-28.19% ｜ 近3年：+7.51% ｜ 近5年：-23.62%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.18<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">1.00-1.06元（现价1.030，净值1.0588，场内折价约2.7%，真低估可现价分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：YTD-28.19%、近1年-36.95%，价格处深度回撤低位；场内为折价2.72%（无溢价），资金呈净申购而非持续流出，不构成典型估值陷阱。但PE/PB及历史分位接口无数据，估值分位无法量化；近1年为负显示趋势性下行未扭转，需警惕低位继续下行的下跌中继风险。近5年-23.62%（为负+低位）触发估值+0.5修正（已计入估值维度分内）。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>国务院研究算力网建设、强化AI基础支撑，利好互联网/AI产业链中长期需求</li><li>场内折价约2.72%，买入成本低于净值，估值性价比优于溢价时点</li><li>YTD-28.19%、近1年-36.95%，处深度回撤低位，近5年-23.62%为跌出来的机会</li><li>十大重仓为腾讯、阿里、拼多多、美团等中概互联网龙头，主题契合度高</li><li>规模368.78亿元、成交活跃，流动性极佳，进出成本低</li><li>7月中旬场内份额净申购（+4.04亿份等），无主力持续净流出迹象</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>近1年-36.95%显示趋势性下行尚未扭转，存在低位继续下行的下跌中继风险</li><li>美国对中国AI企业制裁升级（蒸馏议题），地缘政治风险可能反复压制中概估值</li><li>市场监管总局对在线酒旅平台反垄断合规指导，扰动美团/携程等成分股</li><li>PE/PB及历史分位接口无数据，估值分位无法量化，低估判断缺少量化锚</li><li>QDII基金面临汇率波动与境外市场双重风险，净值日内估算与官方净值可能存在偏差</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">中概互联网ETF易方达（513050）场内价1.030元、实时净值1.0588元，场内折价约2.72%；YTD-28.19%、近1年-36.95%处于深度回撤低位，近5年-23.62%属跌出来的机会，行业受算力网/AI政策利好支撑但面临美国制裁与平台合规扰动，持仓为腾讯/阿里/拼多多等中概龙头，流动性极佳。六维加权total=7.18，判定建议买入。建议买入价：1.00-1.06元，现价1.030附近分批建仓（折价买入更优），不宜一次性重仓，保留回调加仓空间。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>510880 · 红利ETF华泰柏瑞</h3>
+      <div class="meta">板块：红利/银行 ｜ 跟踪：上证红利指数 ｜ 规模：180.0 亿 ｜ 基金经理：柳军</div>
+      <div class="meta">最新价：<b>3.350元（2026-09-23收盘，查询1接口真实返回）</b> ｜ 净值：<b>3.3534元（2026-09-23，查询1行情表净值列）</b> ｜ 折溢价：-0.10%（轻微折价，由场内价3.350与净值3.3534计算；接口未直接返回溢价率） ｜ YTD：+10.32% ｜ 近3年：+23.78% ｜ 近5年：+27.12%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.18<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">3.25-3.45元（现价3.350元，真低估可现价分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：不构成估值陷阱：YTD仅+10.32%（&lt;30%），溢价率约-0.10%（无溢价），近3年+23.78%、近5年+27.12%均温和为正、未&gt;100%。瑕疵为红利板块资金持续净流出与近期回调。数据缺失说明：①上证红利指数估值数据源最新仅至2023-12-29，PE/PB历史分位未返回（PE 5.625/PB 0.608/股息率6.645%为2023年末口径）；②基金经理姓名与任职回报未返回；③溢价率与近5日资金流接口未返回，溢价率由价格与净值计算。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>指数PE(TTM)5.625倍、PB(LF)0.608倍，绝对估值处于极低区间</li><li>股息率6.645%，高股息提供厚安全垫</li><li>YTD仅+10.32%，近3年+23.78%、近5年+27.12%，涨幅温和无超涨</li><li>规模188.30亿元、日成交量84.55万手，流动性优良</li><li>震荡市下红利资产防御属性凸显，7月中证红利单月+10.89%大幅跑赢成长板块</li><li>场内价3.350元略低于净值3.3534元，无溢价风险</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>红利及现金流主题ETF 7月以来合计净流出116.75亿元、份额减少约84.20亿份，资金边涨边撤</li><li>成分股集中于煤炭（7只）、航运物流（2只）等周期性行业，盈利波动大</li><li>近期连续回调：近一周-0.39%、近一月-1.02%，9月23日单日-0.86%</li><li>上证红利指数估值数据源最新仅至2023-12-29，PE/PB历史分位缺失，估值判断存在时效性风险</li><li>基金经理信息与近5日资金流数据缺失，信息完整度不足</li><li>银行板块受监管罚单等事件扰动</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">红利ETF华泰柏瑞（510880）跟踪上证红利指数，2026-09-23场内价3.350元、净值3.3534元（轻微折价0.10%），规模188.30亿元，YTD+10.32%。指数PE≈5.6、PB≈0.61、股息率≈6.6%，绝对估值极低且涨幅温和，判定真低估；主要瑕疵为红利板块资金持续净流出、成分股偏周期性煤炭航运、以及估值分位与基金经理数据缺失。六维加权总分7.18，给予建议买入，可作为低波动红利底仓分批配置。建议买入价3.25-3.45元（现价3.350元，真低估可现价分批建仓）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>512890 · 红利低波ETF华泰柏瑞</h3>
+      <div class="meta">板块：红利/银行 ｜ 跟踪：中证红利低波动指数 ｜ 规模：216.0 亿 ｜ 基金经理：柳军</div>
+      <div class="meta">最新价：<b>1.182元（2026-09-23收盘）</b> ｜ 净值：<b>1.1807元（2026-09-23，接口返回1.18）</b> ｜ 折溢价：+0.11% ｜ YTD：+0.53% ｜ 近3年：+23.17% ｜ 近5年：+36.37%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.12<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">1.12-1.15元（现价1.182，偏低估，建议现价下方3-5%等回调分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：未构成估值陷阱：YTD仅+0.53%（未超涨）、溢价率仅+0.11%（无溢价）、近3年+23.17%/近5年+36.37%（非暴涨）。但跟踪指数PE(TTM)8.45、PB0.86已较2023年末5.53/0.61明显抬升，股息率由6.39%压缩至4.34%，估值处近年中高位；近期份额净减少（资金流出）。PE/PB历史分位与基金经理信息接口未返回（数据缺失）。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>规模304.53亿元、日均成交额约7.66亿元，流动性极佳</li><li>跟踪指数PE(TTM)8.45、PB0.86，绝对估值水平偏低</li><li>股息率约4.34%，低利率环境下红利资产配置价值突出</li><li>银行板块政策与基本面共振：财政注资、净息差企稳、中期分红扩容</li><li>YTD+0.53%基本未涨，无超涨风险；场内溢价仅+0.11%，无溢价风险</li><li>近3年+23.17%、近5年+36.37%，中长期正收益稳健</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>跟踪指数PE/PB较2023年末明显抬升、股息率由6.39%压缩至4.34%，估值处近年中高位，上行空间受限</li><li>近期基金份额持续净减少（262.40亿份→257.92亿份），呈资金净流出</li><li>持仓高度集中于银行板块（前十大含7家银行），行业同质风险偏高</li><li>银行板块前期涨幅可观，后续或震荡、内部分化加剧</li><li>PE/PB历史分位与基金经理信息接口未返回，数据存在缺口</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">红利低波ETF华泰柏瑞（512890）规模超300亿元、流动性极佳，跟踪中证红利低波动指数，银行权重高、股息率约4.34%，YTD+0.53%基本持平，近3年+23.17%、近5年+36.37%收益稳健。当前指数PE 8.45/PB 0.86绝对水平不高但已较2023年末明显抬升、股息率压缩，估值处近年中高位，且近期份额净减少、资金流出，故属偏谨慎的买入。六维评分估值7.0/行业7.5/经理6.5/持仓7.0/风险收益比6.5/流动性9.0，加权总分7.12，判定建议买入。建议买入价1.12-1.15元（现价1.182，现价下方3-5%等回调分批建仓）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>159869 · 游戏ETF华夏</h3>
+      <div class="meta">板块：传媒-游戏（冷门板块） ｜ 跟踪：中证动漫游戏指数 ｜ 规模：90.0 亿 ｜ 基金经理：鲁亚运</div>
+      <div class="meta">最新价：<b>1.070元（2026-09-23场内收盘）</b> ｜ 净值：<b>1.070元（2026-09-23单位净值）</b> ｜ 折溢价：≈0.00%（1.070 vs 净值1.0700；接口未直接返回溢价率字段，由真实价/净值推算） ｜ YTD：-25.62% ｜ 近3年：-0.52% ｜ 近5年：+16.05%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.12<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">1.02-1.07元（现价1.070元，偏低估等回调，可现价轻仓+回调至1.02-1.04分批加仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">8.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：非估值陷阱。YTD -25.62%（负值）、近1年 -32.20%，属深度回调而非超涨；折溢价≈0%，无溢价陷阱；近3年 -0.52%、近5年 +16.05%，长期涨幅无异常。属&#x27;业绩上行、估值低位&#x27;的超跌品种。数据缺失说明：接口未返回PE/PB历史分位、基金经理信息、近期资金流，估值分位以绝对值(PE-TTM 23.78/PB 2.97)与板块研报口径综合判读。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>YTD-25.62%、近1年-32.20%深度回调，估值压力充分释放</li><li>指数PE-TTM 23.78/PB 2.97，研报口径&#x27;估值低位&#x27;</li><li>8月自研游戏海外收入同比+20.8%，连续10个月18%+高增</li><li>8月游戏版号215款、1-8月累计1362款，供给端持续宽松</li><li>折溢价≈0无溢价风险；规模86.84亿元、流动性良好</li><li>重仓含世纪华通、三七互娱等出海主线受益标的</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>传媒为近期最弱申万一级行业(周涨跌幅第26、9/23-2.55%)，短期情绪承压</li><li>近1年-32.20%高波动、深度回撤，趋势尚未确认反转</li><li>纯主题ETF单一赛道β风险，无跨行业分散</li><li>接口未返回PE/PB历史分位与基金经理信息，估值分位判定存在不确定性</li><li>最新近期资金流数据缺失，资金面方向无法确认</li><li>游戏行业对版号/流水/政策敏感，版号放量加剧赛道内卷</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">游戏ETF华夏（159869）处于深度回调+估值偏低+中期基本面向上的错位区间，YTD-25.62%、近1年-32.20%已充分反映情绪压力，版号宽松/出海高景气/AI赋能中期逻辑仍在兑现，折溢价≈0无溢价陷阱，流动性良好；综合加权total=7.12，位于&#x27;建议买入&#x27;区间下沿，属边界性建议。制约在于板块短期情绪偏弱(9/23传媒-2.55%跌幅居前)与高β波动，建议逢回调分批、控制仓位。建议买入价1.02-1.07元（现价1.070元/净值1.0700元）：可现价轻仓，回调至1.02-1.04元分批加仓，跌破1.00元可加大。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>159928 · 消费ETF汇添富</h3>
+      <div class="meta">板块：消费 ｜ 跟踪：中证主要消费指数 ｜ 规模：100.0 亿 ｜ 基金经理：过蓓蓓</div>
+      <div class="meta">最新价：<b>0.656元（2026-09-23收盘，-0.30%）</b> ｜ 净值：<b>0.6562元（2026-09-23接口返回，单位净值0.66）</b> ｜ 折溢价：-0.03%（现价0.656 vs 净值0.6562，基本贴近净值） ｜ YTD：-17.17% ｜ 近3年：-29.63% ｜ 近5年：-36.68%</div>
+    </div>
+    <div class="scorebox"><span class="badge buy">建议买入</span><div class="total">7.02<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：建议买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.636-0.676元（现价0.656，估值处历史中低位且贴近净值，可现价分批建仓；跌破0.640元可加大分批力度）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">8.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：YTD-17.17%未超涨、折溢价贴近净值、无溢价风险；但指数PEG为-2.81（负值）、36只成分股中5只亏损，PE偏低部分源于成分股盈利下修，存在轻度价值陷阱风险；近3年-29.63%、近5年-36.68%为长期下跌，属跌出来的机会；PE历史分位接口未直接返回，据PE真实序列（2023-12为26.79→2026-07为19.82→2026-09-23为22.70）判断为历史中低位；基金经理姓名与任职回报接口未返回。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>指数PE(TTM)22.70、PB(LF)3.37，低于2023年末水平，估值处历史中低位</li><li>指数股息率4.11%（静态4.71%），提供底部现金回报支撑</li><li>最新价0.656贴近净值0.6562，折溢价约-0.03%，无溢价回归风险</li><li>政策强托底：3.1亿元消费券、2500亿以旧换新特别国债、1000亿促内需专项资金、消费十五五规划</li><li>规模150.54亿元、成交额1.44亿元，场内流动性充裕；成分股均为食品饮料/养殖龙头，质地优</li><li>YTD-17.17%、近3年-29.63%、近5年-36.68%，属跌出来的机会，长期下行空间相对有限</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>指数PEG为-2.81（负值）、36只成分股中5只亏损，成分股盈利仍在下修，存在价值陷阱风险</li><li>2026年1-7月社零同比仅+1.2%、7月回落至+0.6%、限额以上-1.1%，消费需求端疲弱</li><li>场内份额2026-09-14起连续净赎回（7日约-1.84亿份），资金持续净流出、趋势尚未反转</li><li>持仓高度集中于白酒+乳品+调味+养殖，板块单一，白酒周期与猪周期共振将放大波动</li><li>近1年-22.28%、价格处0.64~0.67低位下行通道，短期仍可能继续探底</li><li>PE历史分位、基金经理姓名与任职回报接口未返回，估值分位判断为基于PE真实序列的推断，存不确定性</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">消费ETF汇添富（159928）跟踪中证主要消费指数，当前PE(TTM)22.70、PB(LF)3.37处历史中低位，股息率4.11%，折溢价贴近净值（-0.03%），YTD-17.17%、近3年-29.63%、近5年-36.68%，为深度调整后的消费板块左侧配置工具。政策面持续托底消费，但社零数据与资金流向尚未转正，指数PEG为负提示盈利下修风险。六维加权总分7.02分，给予建议买入。建议买入价0.636-0.676元（现价0.656），以现价分批建仓为主，跌破0.640元可加大分批力度；宜左侧分批、避免一次性满仓。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>512690 · 酒ETF鹏华</h3>
+      <div class="meta">板块：食品饮料-白酒 ｜ 跟踪：中证酒指数 ｜ 规模：110.0 亿 ｜ 基金经理：闫冬</div>
+      <div class="meta">最新价：<b>0.415元（2026-09-23，场内收盘价）</b> ｜ 净值：<b>0.42元（精确0.4153元，2026-09-23，单位净值）</b> ｜ 折溢价：约-0.07%（轻微折价，现价0.415/净值0.4153，2026-09-23） ｜ YTD：-22.52% ｜ 近3年：-48.18% ｜ 近5年：-50.71%</div>
+    </div>
+    <div class="scorebox"><span class="badge hold">谨慎买入</span><div class="total">6.89<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：谨慎买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">0.403-0.427元（现价0.415，真低估可现价分批建仓；场内轻微折价约-0.07%，可贴近净值）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">8.5</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">5.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.0</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">9.0</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：YTD为-22.52%（非超涨，无盈利暴增型/严重超涨特征）；场内折价约-0.07%，溢价率无风险（&lt;5%）；资金呈小幅净流出；近3年-48.18%、近5年-50.71%深度下跌，属&#x27;跌出来的机会&#x27;而非&#x27;涨出来的陷阱&#x27;。但中证酒指数PE(TTM)19.44/PB(LF)3.73处历史低位区、股息率4.60%，行业景气拐点未确认、白酒资金情绪低迷（8月中证白酒-10.12%），需警惕基本面持续走弱导致的价值陷阱。基金规模132.69亿元、份额319.49亿份。基金经理姓名/任职回报接口多次查询均未返回，如实标注&#x27;无法给出&#x27;。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>中证酒指数PE(TTM)19.44倍、PB(LF)3.73倍，处近年历史低位（2023-12-29为25.92/6.74）</li><li>指数股息率4.60%（静态5.33%）、风险溢价3.46%，现金回报吸引力上行</li><li>政策端六部门《关于推动历史经典产业高质量发展的意见》将酿造纳入历史经典产业，中期利好</li><li>茅台i茅台常态化投放稳价、飞天批价1740元/八代780元企稳，双节大众宴席与刚需礼赠动销改善</li><li>场内折价约-0.07%，无溢价风险；规模132.69亿元、日成交3-4亿元，流动性优秀</li><li>卖方研报口径：白酒周期底部明显、具备修复条件，首推茅台+区域酒</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>白酒需求持续走弱，商政务消费拖累、行业整体动销仅接近持平，报表拐点未现</li><li>三省&#x27;一品一码&#x27;消费税数字化试点趋严，压制渠道与价格体系</li><li>批价二次下探、渠道库存压力导致基本面低于预期</li><li>8月以来中证白酒跌10.12%，资金被黄酒等题材分流，板块情绪低迷</li><li>份额近两周净流出约1.05亿份，场内资金呈小幅流出</li><li>持仓高度集中于白酒赛道，行业单一风险大（26只成份股中4只亏损）</li><li>基金经理信息接口未返回，管理人层面数据缺失</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">酒ETF鹏华（512690）跟踪中证酒指数，PE(TTM)19.44倍、PB3.73倍处历史深度低位，指数股息率4.60%，基金YTD-22.52%、近3年-48.18%、近5年-50.71%，属跌出来的真低估机会；《历史经典产业高质量发展意见》提供中期政策催化，茅台稳价与双节动销带来边际改善，但行业景气拐点未确认、白酒资金情绪低迷，故为左侧低估而非右侧景气。六维加权总分6.89，判定为谨慎买入：建议分批建仓、控制单笔仓位，等待双节/春节动销与批价验证后再加仓，若批价或报表再度走弱及时止损。建议买入价0.403-0.427元（现价0.415，真低估可现价分批，场内轻微折价约-0.07%可贴近净值）。</div>
+</div>
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h3>512400 · 有色金属ETF南方</h3>
+      <div class="meta">板块：有色金属 ｜ 跟踪：中证有色金属指数 ｜ 规模：200.0 亿 ｜ 基金经理：崔蕾</div>
+      <div class="meta">最新价：<b>1.717元（2026-09-23，昨收1.733）</b> ｜ 净值：<b>1.72元（2026-09-23）</b> ｜ 折溢价：约-0.05%~-0.17%（微折价/平价，场内价1.717 vs 净值1.7178） ｜ YTD：-6.92% ｜ 近3年：+81.82% ｜ 近5年：+18.57%</div>
+    </div>
+    <div class="scorebox"><span class="badge hold">谨慎买入</span><div class="total">6.42<span class="totunit">/10</span></div><div class="totlabel">综合评分</div><div class="sub" style="margin-top:4px">Agent结论：谨慎买入</div></div>
+  </div>
+  <div class="sbp">💡 建议买入价：<span class="sbpv">1.48-1.58元（现价1.717，周期中后段需回调8-15%，严格等回调后分批建仓）</span></div>
+  <div class="dims"><div class="dim"><span class="dl">估值水平</span><span class="dv">5.0</span></div><div class="dim"><span class="dl">行业前景</span><span class="dv">7.5</span></div><div class="dim"><span class="dl">经理能力</span><span class="dv">6.5</span></div><div class="dim"><span class="dl">持仓结构</span><span class="dv">7.0</span></div><div class="dim"><span class="dl">风险收益比</span><span class="dv">5.5</span></div><div class="dim"><span class="dl">流动性</span><span class="dv">8.5</span></div></div>
+  <div class="trap">⚠️ 估值陷阱/长期趋势提示：典型周期股低PE悖论：中证有色PE(TTM)仅16.25倍但PB(LF)已升至3.03倍，较2023-12-29的2.01倍抬升约51%，而PE几乎持平；行业2026H1业绩同比+103.22%、2026Q2单季+96.76%、ROE创历史新高，显示盈利处于周期高位。叠加近2年+101.90%、近3年+81.82%的长期大涨，判定为周期中后段，低PE并非低估。溢价率≈0（不触发&gt;5%扣分），但资金持续净赎回。估值历史分位百分数接口未直接返回，以2023年底对照点(PB 2.01)反推PB已明显抬升。另：基金经理字段接口未返回。</div>
+  <div class="two">
+    <div><h4>支撑逻辑</h4><ul><li>规模244.22亿元、份额142.17亿份，流动性极佳，折溢价极窄(微折价)</li><li>行业供给刚性：铜矿TC跌至-222美元/干吨历史极端低位，2027年精炼铜缺口或扩至37.9万吨，电解铝2026缺口约135万吨</li><li>政策端强化铜冶炼、氧化铝产能治理与兼并重组(十五五)，利好龙头集中度</li><li>新能源+AI算力金属结构性需求重塑，钽/锡/铟/锗等小金属价值重估</li><li>持仓覆盖铜/稀土/钨/锂/钴/铝，龙头汇聚且分散度良好</li><li>场内价1.717 vs 净值1.7178，微折价无溢价泡沫</li></ul></div>
+    <div><h4>风险因素</h4><ul><li>周期股低PE悖论：PB(LF)3.03倍较2023年底2.01倍抬升约51%，行业ROE与业绩处周期高位，盈利回落将吞噬低PE</li><li>近2年+101.90%、近3年+81.82%长期涨幅大，当前YTD-6.92%、近1月-7.80%处高位回调</li><li>近期份额净赎回约3.58亿份，资金面偏流出</li><li>美联储9月重启加息25bp至3.75%-4.00%且点阵图偏鹰，美元与利率持续压制金属价格</li><li>美国精炼铜232关税决策(9/28)存在重大不确定性</li><li>美股/宏观需求受冲击不及预期、地缘政治扰动、矿端供给超预期收紧等风险</li><li>基金经理字段接口未返回，管理人信息不完整</li></ul></div>
+  </div>
+  <div class="note"><b>六维口径：</b>估值水平(权重20) 行业前景(20) 经理能力(12) 持仓结构(13) 风险收益比(25) 流动性(10)；每维满分10分，综合=Σ(维度分×权重)/100。</div>
+  <div class="concl">有色金属ETF南方(512400)规模244亿元、流动性极佳、持仓龙头分散，行业中长期供需紧平衡与新能源/AI算力金属逻辑扎实(行业前景7.5)。但估值端存在显著「周期股低PE悖论」：PE(TTM)16.25倍看似便宜，PB(LF)3.03倍却较2023年底2.01倍抬升约51%，行业ROE与业绩(2026H1同比+103.22%)处周期高位，叠加近2年+101.90%/近3年+81.82%长期大涨，判定周期中后段；同时近期份额净赎回、近1月-7.80%高位回调。六维加权总分6.42分，属谨慎买入区间。作为备选标的，建议严格等待8-15%回调后分批建仓，不建议现价追高。建议买入价1.48-1.58元（现价1.717，周期中后段需回调8-15%，严格等回调分批）。</div>
+</div>
+</div>
+
+<div class="sec">
+  <h2>七、结论汇总</h2>
+  <div class="concl" style="font-size:13.5px">2026-09-24 盘前 Top10：512880证券ETF国泰 / 513180恒生科技ETF华夏 / 512000券商ETF华宝 / 159792港股通互联网ETF富国(🆕) / 513050中概互联网ETF易方达 / 512890红利低波ETF华泰柏瑞 / 513130恒生科技ETF华泰柏瑞 / 513330恒生互联网ETF华夏(🆕) / 510880红利ETF华泰柏瑞 / 512010医药ETF易方达(🆕)；备选：512400有色 / 159928消费 / 512690酒 / 159869游戏。市场环境：A股 9/23 缩量下跌（沪指-0.39%、成交1.78万亿缩量3705亿）、港股恒指-1.01%、隔夜美股三大指数齐跌（纳指-1.13%）、美债收益率全线破5%、10月加息概率71%，风险偏好承压；但央行9/24 8000亿MLF+跨节隔夜逆回购呵护流动性，低估值+高股息+深度回调标的相对占优。</div>
+</div>
+
+<div class="sec">
+  <h2>八、数据来源与方法</h2>
+  <div class="mnote">
+    <b>海选（Step 1）：</b>WebSearch 多渠道（天天基金 / 雪球 / 平安证券 / 集思录 / 中证指数官网 / 同花顺 等），按全量板块字典枚举，候选 50+ 只。<br>
+    <b>基金数据（Step 3）：</b>NeoData 金融数据服务（neodata-financial-search），每只基金由一个独立 Agent 全量查询，原始输出落盘 <code>deliverables/fund-analysis/raw/{code}-raw-2026-09-24.jsonl</code>，分析证据落盘 <code>{code}-analysis-2026-09-24.md</code>。<br>
+    <b>评分口径：</b>六维每维满分 10 分，权重 估值20 / 行业20 / 经理12 / 持仓13 / 风险收益比25 / 流动性10，综合分 = Σ(维度分×权重)/100。<br>
+    <b>建议买入价规则：</b>真低估（估值≥8）现价±3%可分批；偏低估（6-7）现价下方3-5%等回调；盈利暴增/超涨（≤5）现价下方8-15%严格等回调；折价&gt;1%贴净值，溢价&gt;3%给净值价。
+  </div>
+</div>
+
+<div class="disclaimer">
+⚠️ 免责声明：本报告由 AI 基于公开信息与第三方数据接口自动生成，所有数据均来自实时查询，仅供研究参考，<b>不构成任何投资建议或基金推荐</b>。基金估值分位为历史统计指标，低分位不等于未来一定上涨；请自行判断并承担投资风险。市场有风险，投资需谨慎。
+</div>
+
+<script>
+const D = [{"code": "512880", "name": "证券ETF国泰", "sector": "非银金融-证券", "total": 7.73, "scores": {"估值水平": 8.5, "行业前景": 7.5, "经理能力": 7.0, "持仓结构": 7.0, "风险收益比": 7.5, "流动性": 9.0}, "latest_price": 1.065, "nav": 1.0653, "sbp": 1.033, "sbp_text": "1.033-1.097元（现价1.065，真低估可现价分批建仓）", "ytd": "-12.14%", "ytd_3y": 9.46, "ytd_5y": -11.67, "premium": -0.03, "is_new_face": false}, {"code": "513330", "name": "恒生互联网ETF华夏", "sector": "港股互联网", "total": 7.65, "scores": {"估值水平": 8.5, "行业前景": 8.0, "经理能力": 6.0, "持仓结构": 7.5, "风险收益比": 7.0, "流动性": 9.0}, "latest_price": 0.347, "nav": 0.3482, "sbp": 0.337, "sbp_text": "0.337-0.357元（现价0.347，真低估可现价分批建仓）", "ytd": "-32.79%", "ytd_3y": -14.49, "ytd_5y": -46.09, "premium": -0.34, "is_new_face": true}, {"code": "512000", "name": "券商ETF华宝", "sector": "非银金融-证券", "total": 7.62, "scores": {"估值水平": 9.0, "行业前景": 8.0, "经理能力": 6.0, "持仓结构": 7.5, "风险收益比": 6.5, "流动性": 9.0}, "latest_price": 0.51, "nav": 0.5094, "sbp": 0.495, "sbp_text": "0.495-0.525元（现价0.510，真低估可现价分批）", "ytd": "-12.07%", "ytd_3y": 9.25, "ytd_5y": -11.78, "premium": 0.12, "is_new_face": false}, {"code": "513180", "name": "恒生科技ETF华夏", "sector": "港股科技", "total": 7.51, "scores": {"估值水平": 8.0, "行业前景": 7.5, "经理能力": 7.0, "持仓结构": 7.5, "风险收益比": 7.0, "流动性": 8.5}, "latest_price": 0.552, "nav": 0.5534, "sbp": 0.535, "sbp_text": "0.535-0.569元（现价0.552，场内小幅折价-0.25%，接近真低估可现价分批建仓、并保留回调加仓空间）", "ytd": "-24.70%", "ytd_3y": 2.12, "ytd_5y": -30.06, "premium": -0.25, "is_new_face": false}, {"code": "159792", "name": "港股通互联网ETF富国", "sector": "港股互联网", "total": 7.32, "scores": {"估值水平": 8.5, "行业前景": 7.0, "经理能力": 6.0, "持仓结构": 7.5, "风险收益比": 6.5, "流动性": 9.0}, "latest_price": 0.542, "nav": 0.5467, "sbp": 0.526, "sbp_text": "0.526-0.558元（现价0.542，真低估可现价分批）", "ytd": "-35.87%", "ytd_3y": -11.26, "ytd_5y": -45.46, "premium": 0.86, "is_new_face": true}, {"code": "512010", "name": "医药ETF易方达", "sector": "医药生物", "total": 7.28, "scores": {"估值水平": 7.0, "行业前景": 8.0, "经理能力": 7.0, "持仓结构": 7.0, "风险收益比": 6.5, "流动性": 9.0}, "latest_price": 0.384, "nav": 0.3839, "sbp": 0.365, "sbp_text": "0.365-0.375元（现价0.384，偏低估建议回调3%-5%分批建仓）", "ytd": "+1.40%", "ytd_3y": -8.4, "ytd_5y": -43.35, "premium": 0.03, "is_new_face": true}, {"code": "513130", "name": "恒生科技ETF华泰柏瑞", "sector": "港股科技", "total": 7.21, "scores": {"估值水平": 8.5, "行业前景": 7.0, "经理能力": 7.0, "持仓结构": 6.5, "风险收益比": 6.5, "流动性": 8.0}, "latest_price": 0.542, "nav": 0.5437, "sbp": 0.526, "sbp_text": "0.526-0.558元（现价0.542，真低估可现价分批）", "ytd": "-24.45%", "ytd_3y": 0.98, "ytd_5y": -31.22, "premium": -0.31, "is_new_face": false}, {"code": "513050", "name": "中概互联网ETF易方达", "sector": "中概互联", "total": 7.18, "scores": {"估值水平": 8.0, "行业前景": 6.5, "经理能力": 6.5, "持仓结构": 7.5, "风险收益比": 6.5, "流动性": 9.0}, "latest_price": 1.03, "nav": 1.0588, "sbp": 1.0, "sbp_text": "1.00-1.06元（现价1.030，净值1.0588，场内折价约2.7%，真低估可现价分批建仓）", "ytd": "-28.19%", "ytd_3y": 7.51, "ytd_5y": -23.62, "premium": -2.72, "is_new_face": false}, {"code": "510880", "name": "红利ETF华泰柏瑞", "sector": "红利/银行", "total": 7.18, "scores": {"估值水平": 8.0, "行业前景": 6.5, "经理能力": 6.5, "持仓结构": 6.5, "风险收益比": 7.0, "流动性": 9.0}, "latest_price": 3.35, "nav": 3.3534, "sbp": 3.25, "sbp_text": "3.25-3.45元（现价3.350元，真低估可现价分批建仓）", "ytd": "+10.32%", "ytd_3y": 23.78, "ytd_5y": 27.12, "premium": -0.1, "is_new_face": false}, {"code": "512890", "name": "红利低波ETF华泰柏瑞", "sector": "红利/银行", "total": 7.12, "scores": {"估值水平": 7.0, "行业前景": 7.5, "经理能力": 6.5, "持仓结构": 7.0, "风险收益比": 6.5, "流动性": 9.0}, "latest_price": 1.182, "nav": 1.1807, "sbp": 1.12, "sbp_text": "1.12-1.15元（现价1.182，偏低估，建议现价下方3-5%等回调分批建仓）", "ytd": "+0.53%", "ytd_3y": 23.17, "ytd_5y": 36.37, "premium": 0.11, "is_new_face": false}, {"code": "159869", "name": "游戏ETF华夏", "sector": "传媒-游戏（冷门板块）", "total": 7.12, "scores": {"估值水平": 7.5, "行业前景": 7.5, "经理能力": 6.5, "持仓结构": 7.0, "风险收益比": 6.5, "流动性": 8.0}, "latest_price": 1.07, "nav": 1.07, "sbp": 1.02, "sbp_text": "1.02-1.07元（现价1.070元，偏低估等回调，可现价轻仓+回调至1.02-1.04分批加仓）", "ytd": "-25.62%", "ytd_3y": -0.52, "ytd_5y": 16.05, "premium": 0.0, "is_new_face": false}, {"code": "159928", "name": "消费ETF汇添富", "sector": "消费", "total": 7.02, "scores": {"估值水平": 8.0, "行业前景": 6.5, "经理能力": 6.0, "持仓结构": 6.5, "风险收益比": 7.0, "流动性": 8.0}, "latest_price": 0.656, "nav": 0.6562, "sbp": 0.636, "sbp_text": "0.636-0.676元（现价0.656，估值处历史中低位且贴近净值，可现价分批建仓；跌破0.640元可加大分批力度）", "ytd": "-17.17%", "ytd_3y": -29.63, "ytd_5y": -36.68, "premium": -0.03, "is_new_face": false}, {"code": "512690", "name": "酒ETF鹏华", "sector": "食品饮料-白酒", "total": 6.89, "scores": {"估值水平": 8.5, "行业前景": 5.5, "经理能力": 6.0, "持仓结构": 6.5, "风险收益比": 6.5, "流动性": 9.0}, "latest_price": 0.415, "nav": 0.42, "sbp": 0.403, "sbp_text": "0.403-0.427元（现价0.415，真低估可现价分批建仓；场内轻微折价约-0.07%，可贴近净值）", "ytd": "-22.52%", "ytd_3y": -48.18, "ytd_5y": -50.71, "premium": -0.07, "is_new_face": false}, {"code": "512400", "name": "有色金属ETF南方", "sector": "有色金属", "total": 6.42, "scores": {"估值水平": 5.0, "行业前景": 7.5, "经理能力": 6.5, "持仓结构": 7.0, "风险收益比": 5.5, "流动性": 8.5}, "latest_price": 1.717, "nav": 1.72, "sbp": 1.48, "sbp_text": "1.48-1.58元（现价1.717，周期中后段需回调8-15%，严格等回调后分批建仓）", "ytd": "-6.92%", "ytd_3y": 81.82, "ytd_5y": 18.57, "premium": -0.05, "is_new_face": false}];
+const palette = ['#2563eb','#dc2626','#16a34a','#d97706','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#4f46e5','#0d9488','#9333ea','#b45309','#be123c'];
+const shortName = d => d.code + ' ' + (d.name||'').replace(/ETF|基金/g,'').slice(0,6);
+
+// 1 综合评分
+new Chart(document.getElementById('totalChart'), {
+  type:'bar',
+  data:{ labels: D.map(shortName),
+    datasets:[{ label:'综合评分', data: D.map(d=>d.total), backgroundColor: palette, borderRadius:5 }] },
+  options:{ indexAxis:'y', plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'综合评分 '+c.parsed.x}}},
+    scales:{ x:{ min:0, max:10, title:{display:true,text:'综合评分(0-10)'} }, y:{ticks:{font:{size:10}}} } }
+});
+
+// 2 六维雷达 Top3
+const top3 = [...D].sort((a,b)=>b.total-a.total).slice(0,3);
+new Chart(document.getElementById('radarChart'), {
+  type:'radar',
+  data:{ labels:['估值水平','行业前景','经理能力','持仓结构','风险收益比','流动性'],
+    datasets: top3.map((d,i)=>({ label: shortName(d), data: Object.values(d.scores),
+      borderColor: palette[i], backgroundColor: palette[i]+'33', borderWidth:2, pointRadius:3 })) },
+  options:{ plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},
+    scales:{ r:{ min:0, max:10, ticks:{stepSize:2,font:{size:9}}, pointLabels:{font:{size:10}} } } }
+});
+
+// 3 最新价 vs 建议买入价
+new Chart(document.getElementById('priceChart'), {
+  type:'bar',
+  data:{ labels: D.map(shortName),
+    datasets:[
+      { label:'最新价', data: D.map(d=>d.latest_price), backgroundColor:'#2563eb', borderRadius:4 },
+      { label:'建议买入价(区间下限)', data: D.map(d=>d.sbp), backgroundColor:'#f59e0b', borderRadius:4 }
+    ] },
+  options:{ plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},
+    scales:{ y:{ title:{display:true,text:'价格(元)'} }, x:{ticks:{font:{size:9},maxRotation:60,minRotation:45}} } }
+});
+
+// 4 折溢价率
+new Chart(document.getElementById('premiumChart'), {
+  type:'bar',
+  data:{ labels: D.map(shortName),
+    datasets:[{ label:'折溢价率(%)', data: D.map(d=>d.premium),
+      backgroundColor: D.map(d=>(d.premium!=null && d.premium>0)?'#dc2626':'#16a34a'), borderRadius:4 }] },
+  options:{ plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'折溢价 '+(c.parsed.y==null?'—':c.parsed.y+'%')}}},
+    scales:{ y:{ title:{display:true,text:'折溢价率(%)'} }, x:{ticks:{font:{size:9},maxRotation:60,minRotation:45}} } }
+});
+
+// 5 长期涨幅
+new Chart(document.getElementById('longChart'), {
+  type:'bar',
+  data:{ labels: D.map(shortName),
+    datasets:[
+      { label:'近3年涨幅(%)', data: D.map(d=>d.ytd_3y), backgroundColor:'#7c3aed', borderRadius:4 },
+      { label:'近5年涨幅(%)', data: D.map(d=>d.ytd_5y), backgroundColor:'#0891b2', borderRadius:4 }
+    ] },
+  options:{ plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},
+    scales:{ y:{ title:{display:true,text:'涨幅(%)'} }, x:{ticks:{font:{size:9},maxRotation:60,minRotation:45}} } }
+});
+</script>
+</body>
+</html>
